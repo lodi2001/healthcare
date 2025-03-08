@@ -217,6 +217,108 @@ If you're having issues with the management commands, you can use the provided P
    docker-compose exec web python create_services_script.py
    ```
 
+### Option 3: Using Django Shell (Most Reliable)
+
+If you're still having issues, you can create the services directly through the Django shell:
+
+1. **Access the Django shell**:
+   ```bash
+   # On your production server
+   docker-compose exec web python manage.py shell
+   ```
+
+2. **Copy and paste this entire code block into the shell**:
+   ```python
+   from apps.services.models import Service, ServiceCategory
+
+   # Create default service categories
+   default_categories = [
+       {'name': 'General Medicine', 'description': 'General healthcare services', 'icon': 'fa-stethoscope'},
+       {'name': 'Specialized Care', 'description': 'Specialized healthcare services', 'icon': 'fa-heartbeat'},
+       {'name': 'Cardiology', 'description': 'Heart and cardiovascular system', 'icon': 'fa-heart'},
+       {'name': 'Neurology', 'description': 'Brain, spinal cord, and nervous system', 'icon': 'fa-brain'},
+   ]
+   
+   categories_created = 0
+   for cat_data in default_categories:
+       cat, created = ServiceCategory.objects.get_or_create(
+           name=cat_data['name'],
+           defaults={
+               'description': cat_data['description'],
+               'icon': cat_data.get('icon', '')
+           }
+       )
+       if created:
+           categories_created += 1
+           print(f"Created service category: {cat.name}")
+   
+   # Get the General Medicine category for services
+   try:
+       default_category = ServiceCategory.objects.get(name='General Medicine')
+   except ServiceCategory.DoesNotExist:
+       default_category = ServiceCategory.objects.first()
+   
+   if not default_category:
+       print("No category found. Creating General Medicine category.")
+       default_category = ServiceCategory.objects.create(
+           name='General Medicine',
+           description='General healthcare services',
+           icon='fa-stethoscope'
+       )
+   
+   # Create default services
+   default_services = [
+       {'name': 'General Consultation', 'description': 'Regular medical consultation', 'price': 150.00, 'duration': 30},
+       {'name': 'Follow-up Visit', 'description': 'Follow-up appointment for existing patients', 'price': 100.00, 'duration': 20},
+   ]
+   
+   # Get the Specialized Care category
+   try:
+       specialized_category = ServiceCategory.objects.get(name='Specialized Care')
+   except ServiceCategory.DoesNotExist:
+       specialized_category = ServiceCategory.objects.create(
+           name='Specialized Care',
+           description='Specialized healthcare services',
+           icon='fa-heartbeat'
+       )
+   
+   # Add specialized services
+   specialized_services = [
+       {'name': 'Cardiac Assessment', 'description': 'Comprehensive heart health evaluation', 'price': 300.00, 'duration': 45},
+       {'name': 'Diabetes Management', 'description': 'Diabetes care and management', 'price': 200.00, 'duration': 40},
+   ]
+   
+   # Combine all services
+   services_to_create = []
+   for service in default_services:
+       service['category'] = default_category
+       services_to_create.append(service)
+   
+   for service in specialized_services:
+       service['category'] = specialized_category
+       services_to_create.append(service)
+   
+   services_created = 0
+   for service_data in services_to_create:
+       service, created = Service.objects.get_or_create(
+           name=service_data['name'],
+           defaults={
+               'category': service_data['category'],
+               'description': service_data['description'],
+               'price': service_data['price'],
+               'duration_minutes': service_data['duration'],
+               'pricing_type': 'fixed'
+           }
+       )
+       if created:
+           services_created += 1
+           print(f"Created service: {service.name}")
+   
+   print(f'Created {categories_created} service categories and {services_created} services')
+   ```
+
+3. **Press Enter** to execute the code and create the services
+
 This script will create a set of default service categories and services if they don't already exist in the database.
 
 ## Troubleshooting
