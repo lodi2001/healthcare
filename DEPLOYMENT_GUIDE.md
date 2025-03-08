@@ -196,20 +196,28 @@ To ensure that your production environment has the same services and service cat
    ```bash
    # Run this on your production server
    cd /root/healthcare
-   docker-compose exec web python manage.py import_initial_data
+   docker-compose exec web python manage.py loaddata fixtures/service_categories.json fixtures/services.json
    ```
 
-### Option 2: Create Default Data Directly
+### Option 2: Using Direct Script (Recommended)
 
-If you prefer to create default data directly on your production server:
+If you're having issues with the management commands, you can use the provided Python script:
 
-```bash
-# Run this on your production server
-cd /root/healthcare
-docker-compose exec web python manage.py create_default_data
-```
+1. **Make sure you've pulled the latest code**:
+   ```bash
+   # On your production server
+   cd /root/healthcare
+   git pull origin master
+   ```
 
-This command will create a set of default service categories and services if they don't already exist in the database.
+2. **Run the script directly**:
+   ```bash
+   # On your production server
+   cd /root/healthcare
+   docker-compose exec web python create_services_script.py
+   ```
+
+This script will create a set of default service categories and services if they don't already exist in the database.
 
 ## Troubleshooting
 
