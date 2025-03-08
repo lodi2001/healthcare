@@ -96,6 +96,7 @@ class HealthcareProviderDashboardView(BaseDashboardView):
     Dashboard view for healthcare providers.
     This view determines which specific dashboard to show based on provider type.
     """
+    
     def get_template_names(self):
         user = self.request.user
         if user.user_type == 'healthcare_provider':
@@ -106,68 +107,6 @@ class HealthcareProviderDashboardView(BaseDashboardView):
         
         # Default to the original healthcare provider dashboard
         return ['dashboard/healthcare_provider_dashboard.html']
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        user = self.request.user
-        if user.user_type == 'healthcare_provider':
-            if user.healthcare_provider_type == 'doctor':
-                # Get doctor-specific statistics
-                # Count services offered by this doctor
-                context['services_count'] = ProviderService.objects.filter(
-                    provider=user,
-                    is_available=True
-                ).count()
-                
-                # Count appointments
-                from datetime import datetime
-                today = datetime.now().date()
-                appointments = Appointment.objects.filter(provider_service__provider=user)
-                
-                context['total_appointments'] = appointments.count()
-                context['completed_appointments'] = appointments.filter(
-                    status='completed'
-                ).count()
-                context['upcoming_appointments'] = appointments.filter(
-                    appointment_date__gte=today,
-                    status__in=['scheduled', 'confirmed']
-                ).count()
-                
-                # Get upcoming appointments for display
-                context['upcoming_appointment_list'] = appointments.filter(
-                    appointment_date__gte=today,
-                    status__in=['scheduled', 'confirmed']
-                ).order_by('appointment_date', 'start_time')[:5]
-                
-            elif user.healthcare_provider_type == 'clinic':
-                # Healthcare provider specific statistics
-                context['visits'] = EHR.objects.aggregate(total=Count('visits'))['total'] or 0
-                context['medications'] = 4  # Mock data
-                context['lab_results'] = 15  # Mock data
-                context['vaccinations'] = 20  # Mock data
-                context['total_lookups'] = 11  # Mock data
-                context['variants'] = 20  # Mock data
-                context['reports'] = Report.objects.count()
-                context['sequenced_samples'] = GenomicData.objects.aggregate(total=Count('sequenced_samples'))['total'] or 0
-                
-                # Get doctors associated with this clinic
-                context['doctors'] = User.objects.filter(
-                    user_type='healthcare_provider',
-                    healthcare_provider_type='doctor'
-                ).order_by('first_name')
-        else:
-            # Default healthcare provider statistics
-            context['visits'] = EHR.objects.aggregate(total=Count('visits'))['total'] or 0
-            context['medications'] = 4  # Mock data
-            context['lab_results'] = 15  # Mock data
-            context['vaccinations'] = 20  # Mock data
-            context['total_lookups'] = 11  # Mock data
-            context['variants'] = 20  # Mock data
-            context['reports'] = Report.objects.count()
-            context['sequenced_samples'] = GenomicData.objects.aggregate(total=Count('sequenced_samples'))['total'] or 0
-        
-        return context
 
 
 class CompanyDashboardView(BaseDashboardView):
