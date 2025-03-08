@@ -173,6 +173,44 @@ Then edit the `.env` file to set your production values:
 
 The application will automatically use the appropriate settings based on the `PRODUCTION` flag.
 
+## Transferring Initial Data to Production
+
+To ensure that your production environment has the same services and service categories data as your local environment, follow these steps:
+
+### Option 1: Using Fixtures (Data Export/Import)
+
+1. **Export data from your local environment**:
+   ```bash
+   # Run this command in your local development environment
+   python manage.py export_initial_data
+   ```
+   This will create JSON fixtures in the `fixtures/` directory.
+
+2. **Copy the fixtures to your production server**:
+   ```bash
+   # Copy fixtures to your server (replace username and server-ip with your values)
+   scp -r fixtures/ username@server-ip:/root/healthcare/
+   ```
+
+3. **Import data on your production server**:
+   ```bash
+   # Run this on your production server
+   cd /root/healthcare
+   docker-compose exec web python manage.py import_initial_data
+   ```
+
+### Option 2: Create Default Data Directly
+
+If you prefer to create default data directly on your production server:
+
+```bash
+# Run this on your production server
+cd /root/healthcare
+docker-compose exec web python manage.py create_default_data
+```
+
+This command will create a set of default service categories and services if they don't already exist in the database.
+
 ## Troubleshooting
 
 ### View Logs
