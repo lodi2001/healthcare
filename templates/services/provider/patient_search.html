@@ -1,0 +1,140 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Patient Search" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-result-card {
+        transition: transform 0.2s;
+    }
+    .search-result-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .patient-info {
+        display: flex;
+        align-items: center;
+    }
+    .patient-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.5rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">{% trans "Patient Search" %}</h1>
+    
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control form-control-lg" id="q" name="q" 
+                               placeholder="{% trans 'Search by name, email, or national ID' %}" 
+                               value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">{% trans "Search" %}</button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'provider_patient_register' %}" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-user-plus"></i> {% trans "Add Patient" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Search Results -->
+    {% if query %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    {% blocktrans with count=patients.count %}
+                        {{ count }} Results for "{{ query }}"
+                    {% endblocktrans %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if patients %}
+                    <div class="row">
+                        {% for patient in patients %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card search-result-card">
+                                    <div class="card-body">
+                                        <div class="patient-info">
+                                            <div class="patient-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ patient.get_full_name }}</h5>
+                                                <p class="card-text text-muted mb-0">
+                                                    <small>
+                                                        <i class="fas fa-id-card me-1"></i> {{ patient.national_id }}
+                                                    </small>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="card-text mb-1">
+                                                    <i class="fas fa-envelope me-1"></i> {{ patient.email }}
+                                                </p>
+                                                {% if patient.phone_number %}
+                                                <p class="card-text mb-1">
+                                                    <i class="fas fa-phone me-1"></i> {{ patient.phone_number }}
+                                                </p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <a href="{% url 'provider_patient_detail' patient.id %}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-user-md me-1"></i> {% trans "View Patient" %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% blocktrans %}
+                            No patients found matching "{{ query }}". Try a different search term.
+                        {% endblocktrans %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-search fa-4x text-muted"></i>
+                </div>
+                <h4 class="text-muted">{% trans "Enter a search term to find patients" %}</h4>
+                <p class="text-muted">
+                    {% trans "You can search by patient name, email, or national ID" %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

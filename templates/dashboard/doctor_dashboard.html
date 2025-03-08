@@ -1,0 +1,340 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Doctor Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header bg-gradient-primary text-white p-4 mb-4 rounded shadow-sm">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0 mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Doctor Dashboard</li>
+            </ol>
+        </nav>
+        <h1 class="mb-0">Doctor Dashboard</h1>
+        <p class="mb-0">Welcome Dr. {{ user.first_name }} {{ user.last_name }}</p>
+    </div>
+</div>
+
+<!-- Dashboard Stats -->
+<div class="container-fluid mb-4">
+    <div class="row">
+        <!-- Total Appointments -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-success-soft">
+                            <i class="fas fa-calendar-check text-success"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Total Appointments</h5>
+                    <h2 class="mb-0 counter">{{ total_appointments|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Services Offered -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-primary-soft">
+                            <i class="fas fa-stethoscope text-primary"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Services Offered</h5>
+                    <h2 class="mb-0 counter">{{ services_count|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completed Appointments -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-success-soft">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Completed</h5>
+                    <h2 class="mb-0 counter">{{ completed_appointments|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upcoming Appointments -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-warning-soft">
+                            <i class="fas fa-clock text-warning"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Upcoming</h5>
+                    <h2 class="mb-0 counter">{{ upcoming_appointments|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="container-fluid mb-4">
+    <h5 class="mb-3 text-primary">Quick Actions</h5>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_services' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary-soft mx-auto mb-3">
+                        <i class="fas fa-medkit text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Manage Services</h5>
+                    <p class="card-text text-muted small">Add, edit or remove your medical services</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_appointments' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info-soft mx-auto mb-3">
+                        <i class="fas fa-calendar-alt text-info"></i>
+                    </div>
+                    <h5 class="card-title">View Appointments</h5>
+                    <p class="card-text text-muted small">Manage your patient appointments</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_availability' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning-soft mx-auto mb-3">
+                        <i class="fas fa-clock text-warning"></i>
+                    </div>
+                    <h5 class="card-title">Set Availability</h5>
+                    <p class="card-text text-muted small">Define your working hours and breaks</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_reviews' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success-soft mx-auto mb-3">
+                        <i class="fas fa-star text-success"></i>
+                    </div>
+                    <h5 class="card-title">View Reviews</h5>
+                    <p class="card-text text-muted small">See what your patients are saying</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Appointments Section -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-calendar-day me-2"></i>Upcoming Appointments
+            </h5>
+            <a href="{% url 'provider_appointments' %}" class="btn btn-sm btn-primary">
+                View All
+            </a>
+        </div>
+        <div class="card-body">
+            {% if upcoming_appointment_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Patient</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in upcoming_appointment_list %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary-soft me-2">
+                                                {{ appointment.patient.get_full_name|slice:":1" }}
+                                            </div>
+                                            <div>{{ appointment.patient.get_full_name }}</div>
+                                        </div>
+                                    </td>
+                                    <td>{{ appointment.provider_service.service.name }}</td>
+                                    <td>{{ appointment.appointment_date }}</td>
+                                    <td>{{ appointment.start_time }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-{% if appointment.status == 'confirmed' %}success{% elif appointment.status == 'scheduled' %}warning{% else %}secondary{% endif %}">
+                                            {{ appointment.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'provider_appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary rounded-circle">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <div class="icon-circle bg-light mx-auto">
+                            <i class="fas fa-calendar-day text-muted fa-2x"></i>
+                        </div>
+                    </div>
+                    <h5 class="text-muted">No upcoming appointments</h5>
+                    <p class="text-muted small">Your schedule is clear for now.</p>
+                    <a href="{% url 'provider_availability' %}" class="btn btn-sm btn-primary mt-2">
+                        <i class="fas fa-clock me-1"></i> Set Your Availability
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard styling */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    /* Icon styling */
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .icon-circle i {
+        font-size: 28px;
+    }
+    
+    /* Soft background colors */
+    .bg-primary-soft {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+    
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+    
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .bg-info-soft {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    
+    /* Card hover effects */
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    /* Action cards */
+    .action-card {
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .action-card:hover .icon-circle {
+        transform: scale(1.1);
+    }
+    
+    /* Counter animation */
+    .counter {
+        font-weight: 700;
+        color: #333;
+    }
+    
+    /* Avatar circles for patient names */
+    .avatar-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    
+    /* Responsive table adjustments */
+    .table th {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    /* Badge styling */
+    .badge.rounded-pill {
+        padding: 0.35em 0.65em;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any JavaScript for the dashboard here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple animation for counters
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.innerText);
+            let count = 0;
+            const duration = 1000; // 1 second
+            const increment = target / (duration / 16); // 60fps
+            
+            if (target > 0) {
+                const timer = setInterval(() => {
+                    count += increment;
+                    if (count >= target) {
+                        counter.innerText = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.innerText = Math.floor(count);
+                    }
+                }, 16);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Manage Availability - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid header-green py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'provider_dashboard' %}" class="text-white">Provider Dashboard</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Manage Availability</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Manage Your Availability</h2>
+        <p class="text-white-50">Set your working hours and availability for patient appointments</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>Your Availability Schedule</h3>
+                <a href="{% url 'provider_availability_add' %}" class="btn btn-success-custom">
+                    <i class="fas fa-plus me-2"></i> Add New Schedule
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if schedules %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for schedule in schedules %}
+                                        <tr>
+                                            <td>{{ schedule.get_day_of_week_display }}</td>
+                                            <td>{{ schedule.start_time }}</td>
+                                            <td>{{ schedule.end_time }}</td>
+                                            <td>
+                                                {% if schedule.is_active %}
+                                                    <span class="badge bg-success">Active</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Inactive</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <a href="{% url 'provider_availability_update' schedule.id %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="{% url 'provider_availability_delete' schedule.id %}" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-calendar-alt text-muted fa-4x mb-3"></i>
+                        <h4 class="mb-3">No Availability Schedule Set</h4>
+                        <p class="mb-4">You haven't set up your availability schedule yet. Add your working hours to let patients book appointments with you.</p>
+                        <a href="{% url 'provider_availability_add' %}" class="btn btn-success-custom">
+                            <i class="fas fa-plus me-2"></i> Add Your First Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Availability Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-clock text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6>Set Regular Hours</h6>
+                                    <p class="mb-0 small">Consistent availability helps patients find suitable appointment times.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-calendar-check text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6>Include Breaks</h6>
+                                    <p class="mb-0 small">Create separate schedules for morning and afternoon if you take a lunch break.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-toggle-on text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6>Activate/Deactivate</h6>
+                                    <p class="mb-0 small">Use the active toggle to temporarily disable specific time slots without deleting them.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid footer-custom">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-3">Healthcare Portal</h5>
+                <p class="mb-3">Providing advanced healthcare solutions for providers and patients across Saudi Arabia.</p>
+                <div class="d-flex">
+                    <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h6 class="mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="mb-2"><a href="#">About Us</a></li>
+                    <li class="mb-2"><a href="#">Services</a></li>
+                    <li class="mb-2"><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h6 class="mb-3">Support</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#">Help Center</a></li>
+                    <li class="mb-2"><a href="#">FAQs</a></li>
+                    <li class="mb-2"><a href="#">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="mb-3">Contact Us</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Riyadh, Saudi Arabia</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> +966 11 123 4567</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@healthcare.sa</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid border-top border-secondary py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; 2025 Healthcare Portal. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>Developed by Healthcare IT Team</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

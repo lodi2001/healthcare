@@ -1,0 +1,173 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Appointment Details" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% trans "Appointment Details" %}</h1>
+        <div>
+            <a href="{% url 'provider_appointments' %}" class="btn btn-sm btn-secondary shadow-sm">
+                <i class="fas fa-arrow-left fa-sm text-white-50 mr-1"></i> {% trans "Back to Appointments" %}
+            </a>
+            {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+            <a href="{% url 'provider_appointment_update' appointment.id %}" class="btn btn-sm btn-primary shadow-sm ml-2">
+                <i class="fas fa-edit fa-sm text-white-50 mr-1"></i> {% trans "Update Status" %}
+            </a>
+            {% endif %}
+            {% if appointment.status == 'completed' %}
+            <a href="{% url 'medical_notes_update' appointment.id %}" class="btn btn-sm btn-info shadow-sm ml-2">
+                <i class="fas fa-notes-medical fa-sm text-white-50 mr-1"></i> {% trans "Medical Notes" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Appointment Information Card -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans "Appointment Information" %}</h6>
+                    <span class="badge badge-{% if appointment.status == 'scheduled' %}warning{% elif appointment.status == 'confirmed' %}info{% elif appointment.status == 'completed' %}success{% elif appointment.status == 'cancelled' %}danger{% elif appointment.status == 'no_show' %}dark{% endif %} px-3 py-2">
+                        {{ appointment.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800">{% trans "Service" %}</h5>
+                                <p class="mb-0">{{ appointment.provider_service.service.name }}</p>
+                                <p class="text-muted small">{{ appointment.provider_service.service.category.name }}</p>
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800">{% trans "Date & Time" %}</h5>
+                                <p class="mb-0">{{ appointment.appointment_date|date:"l, F j, Y" }}</p>
+                                <p class="text-muted">{{ appointment.start_time|time:"g:i A" }} - {{ appointment.end_time|time:"g:i A" }}</p>
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800">{% trans "Price" %}</h5>
+                                <p class="mb-0">{{ appointment.provider_service.price_display }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800">{% trans "Patient Information" %}</h5>
+                                <p class="mb-0">{{ appointment.patient.get_full_name }}</p>
+                                <p class="text-muted small">ID: {{ appointment.patient.national_id }}</p>
+                                {% if appointment.patient.email %}
+                                <p class="text-muted small">
+                                    <i class="fas fa-envelope mr-1"></i> {{ appointment.patient.email }}
+                                </p>
+                                {% endif %}
+                                {% if appointment.patient.profile.phone_number %}
+                                <p class="text-muted small">
+                                    <i class="fas fa-phone mr-1"></i> {{ appointment.patient.profile.phone_number }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <div class="mb-4">
+                                <h5 class="font-weight-bold text-gray-800">{% trans "Booking Information" %}</h5>
+                                <p class="mb-0">{% trans "Created" %}: {{ appointment.created_at|date:"M d, Y" }}</p>
+                                <p class="mb-0">{% trans "Last Updated" %}: {{ appointment.updated_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if appointment.notes %}
+                    <div class="mt-4">
+                        <h5 class="font-weight-bold text-gray-800">{% trans "Notes" %}</h5>
+                        <div class="p-3 bg-light rounded">
+                            {{ appointment.notes|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if appointment.medical_notes %}
+                    <div class="mt-4">
+                        <h5 class="font-weight-bold text-gray-800">{% trans "Medical Notes" %}</h5>
+                        <div class="p-3 bg-light rounded">
+                            {{ appointment.medical_notes|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Patient History Card -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans "Patient History" %}</h6>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'provider_patient_detail' appointment.patient.id %}" class="btn btn-info btn-block mb-3">
+                        <i class="fas fa-user-md mr-1"></i> {% trans "View Patient Profile" %}
+                    </a>
+                    
+                    <h6 class="font-weight-bold">{% trans "Previous Appointments" %}</h6>
+                    {% with previous_appointments=appointment.patient.appointments.all|dictsortreversed:"appointment_date" %}
+                        {% if previous_appointments.count > 1 %}
+                            <div class="timeline">
+                                {% for prev_apt in previous_appointments %}
+                                    {% if prev_apt.id != appointment.id %}
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker {% if prev_apt.status == 'completed' %}bg-success{% elif prev_apt.status == 'cancelled' %}bg-danger{% else %}bg-info{% endif %}"></div>
+                                            <div class="timeline-content">
+                                                <h6 class="mb-0">{{ prev_apt.provider_service.service.name }}</h6>
+                                                <p class="small text-muted mb-0">{{ prev_apt.appointment_date|date:"M d, Y" }}</p>
+                                                <span class="badge badge-{% if prev_apt.status == 'scheduled' %}warning{% elif prev_apt.status == 'confirmed' %}info{% elif prev_apt.status == 'completed' %}success{% elif prev_apt.status == 'cancelled' %}danger{% elif prev_apt.status == 'no_show' %}dark{% endif %} badge-pill">
+                                                    {{ prev_apt.get_status_display }}
+                                                </span>
+                                                <a href="{% url 'provider_appointment_detail' prev_apt.id %}" class="small ml-2">
+                                                    {% trans "View" %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">{% trans "No previous appointments found." %}</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1rem;
+        border-left: 1px solid #e3e6f0;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -0.5rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+    }
+    
+    .timeline-content {
+        padding-left: 1rem;
+        padding-bottom: 1rem;
+    }
+</style>
+{% endblock %}

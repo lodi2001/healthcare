@@ -1,0 +1,229 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Patient Details" %} - {{ patient.get_full_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .patient-header {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .patient-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #6c757d;
+    }
+    .appointment-card {
+        transition: transform 0.2s;
+        margin-bottom: 15px;
+    }
+    .appointment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .status-badge {
+        font-size: 0.8rem;
+    }
+    .tab-content {
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        border-radius: 0 0 0.25rem 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back Button -->
+    <div class="mb-3">
+        <a href="{% url 'provider_patient_search' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Search" %}
+        </a>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="patient-header">
+                <div class="d-flex align-items-center">
+                    <div class="patient-avatar me-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0">{{ patient.get_full_name }}</h2>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-id-card me-1"></i> {% trans "National ID" %}: {{ patient.national_id }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'provider_schedule_appointment_for_patient' patient.id %}" class="btn btn-primary">
+                <i class="fas fa-calendar-plus me-2"></i>{% trans "Schedule Appointment" %}
+            </a>
+        </div>
+    </div>
+    
+    <!-- Patient Information Tabs -->
+    <ul class="nav nav-tabs" id="patientTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab" aria-controls="appointments" aria-selected="true">
+                <i class="fas fa-calendar-check me-1"></i> {% trans "Appointments" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="medical-history-tab" data-bs-toggle="tab" data-bs-target="#medical-history" type="button" role="tab" aria-controls="medical-history" aria-selected="false">
+                <i class="fas fa-notes-medical me-1"></i> {% trans "Medical History" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false">
+                <i class="fas fa-hand-holding-medical me-1"></i> {% trans "Services" %}
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="patientTabsContent">
+        <!-- Appointments Tab -->
+        <div class="tab-pane fade show active" id="appointments" role="tabpanel" aria-labelledby="appointments-tab">
+            <h4 class="mb-3">{% trans "Appointment History" %}</h4>
+            
+            {% if appointment_error %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% trans "The appointment system is currently unavailable." %}
+                    <p class="small mt-2 mb-0">{% trans "Technical details:" %} {{ appointment_error }}</p>
+                </div>
+            {% elif appointments %}
+                {% for appointment in appointments %}
+                    <div class="card appointment-card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h5 class="card-title">{{ appointment.appointment_date|date:"F j, Y" }}</h5>
+                                    <p class="card-text text-muted">
+                                        <i class="far fa-clock me-1"></i> {{ appointment.start_time|time:"g:i A" }} - {{ appointment.end_time|time:"g:i A" }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="card-subtitle mb-2">{{ appointment.provider_service.service.name }}</h6>
+                                    <p class="card-text">
+                                        <span class="badge 
+                                            {% if appointment.status == 'completed' %}bg-success
+                                            {% elif appointment.status == 'cancelled' %}bg-danger
+                                            {% elif appointment.status == 'no_show' %}bg-warning
+                                            {% elif appointment.status == 'confirmed' %}bg-primary
+                                            {% else %}bg-secondary{% endif %} status-badge">
+                                            {{ appointment.get_status_display }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-5 text-end">
+                                    <div class="btn-group">
+                                        <a href="{% url 'provider_appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i> {% trans "View Details" %}
+                                        </a>
+                                        <a href="{% url 'medical_notes_update' appointment.id %}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-notes-medical me-1"></i> {% trans "Medical Notes" %}
+                                        </a>
+                                        <a href="{% url 'provider_appointment_update' appointment.id %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit me-1"></i> {% trans "Update Status" %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if appointment.notes %}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p class="card-text"><strong>{% trans "Notes" %}:</strong> {{ appointment.notes }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% trans "No appointments found for this patient." %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Medical History Tab -->
+        <div class="tab-pane fade" id="medical-history" role="tabpanel" aria-labelledby="medical-history-tab">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                {% trans "Medical history information will be loaded from the EHR system." %}
+            </div>
+            
+            <!-- Placeholder for medical history -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{% trans "Medical History Summary" %}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted text-center py-4">
+                        <i class="fas fa-notes-medical fa-3x mb-3 d-block"></i>
+                        {% trans "Connect to the EHR system to view this patient's medical history." %}
+                    </p>
+                    <div class="text-center">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-link me-1"></i> {% trans "Connect to EHR" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Services Tab -->
+        <div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
+            <h4 class="mb-3">{% trans "Recommended Services" %}</h4>
+            
+            <!-- Placeholder for recommended services -->
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                {% trans "Based on the patient's profile and medical history, the following services are recommended:" %}
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Regular Health Checkup" %}</h5>
+                            <p class="card-text">{% trans "Comprehensive health assessment including vital signs, blood tests, and physical examination." %}</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-calendar-plus me-1"></i> {% trans "Schedule" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{% trans "Nutrition Consultation" %}</h5>
+                            <p class="card-text">{% trans "Personalized nutrition advice and dietary planning with a certified nutritionist." %}</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-calendar-plus me-1"></i> {% trans "Schedule" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

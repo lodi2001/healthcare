@@ -1,0 +1,181 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Report Details - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Report Details</h2>
+        <p class="lead">Viewing report {{ report.report_id }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'report_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Reports
+        </a>
+    </div>
+</div>
+
+<!-- Report Details -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Report Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Report ID</h5>
+                        <p class="lead">{{ report.report_id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Status</h5>
+                        <p>
+                            {% if report.status == 'done' %}
+                            <span class="badge bg-success">Done</span>
+                            {% else %}
+                            <span class="badge bg-warning">Waiting Approval</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Patient</h5>
+                        <p>{{ report.patient.user.first_name }} {{ report.patient.user.last_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Date</h5>
+                        <p>{{ report.date }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Type</h5>
+                        <p>{{ report.get_type_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if user.user_type == 'healthcare_provider' and report.status == 'waiting_approval' %}
+                        <h5>Actions</h5>
+                        <form method="post" action="{% url 'approve_report' report.report_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Approve Report</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Report Content</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <pre class="report-content">{{ report.content }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Information -->
+{% if report.type == 'genomic' %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Genomic Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Variants</h5>
+                        <ul>
+                            <li>BRCA1: rs28897696 (Pathogenic)</li>
+                            <li>MTHFR: rs1801133 (Benign)</li>
+                            <li>CYP2C19: rs4244285 (Likely pathogenic)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Risk Alleles</h5>
+                        <ul>
+                            <li>Type 2 Diabetes: TCF7L2 (Moderate risk)</li>
+                            <li>Coronary Artery Disease: CDKN2B-AS1 (Low risk)</li>
+                            <li>Alzheimer's Disease: APOE (High risk)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif report.type == 'clinical' %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Clinical Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Diagnosis</h5>
+                        <p>Mild hypertension</p>
+                        
+                        <h5>Recommendations</h5>
+                        <ul>
+                            <li>Regular exercise (30 minutes daily)</li>
+                            <li>Low sodium diet</li>
+                            <li>Stress management techniques</li>
+                            <li>Blood pressure monitoring twice weekly</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Medications</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Dosage</th>
+                                    <th>Frequency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lisinopril</td>
+                                    <td>10mg</td>
+                                    <td>Once daily</td>
+                                </tr>
+                                <tr>
+                                    <td>Hydrochlorothiazide</td>
+                                    <td>12.5mg</td>
+                                    <td>Once daily</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .report-content {
+        white-space: pre-wrap;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}

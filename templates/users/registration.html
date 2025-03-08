@@ -1,0 +1,353 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Register as {{ view.kwargs.user_type|title }} - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid header-green py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'user_type_selection' %}" class="text-white">Login Type</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Personal details</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Fill your personal details</h2>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Personal Information</h5>
+                    <p class="card-text small text-muted">Please verify your personal information, and provide an email and a phone number.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <form method="post" novalidate class="needs-validation">
+                {% csrf_token %}
+                
+                <!-- First and Last Name Fields - Show only for non-clinic providers -->
+                <div class="row mb-4" id="personal-name-fields">
+                    <div class="col-md-6">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name <span class="text-danger">*</span></label>
+                        <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" 
+                            class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                            placeholder="Mohammed" required>
+                        {% if form.first_name.errors %}
+                            <div class="invalid-feedback">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" 
+                            class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                            placeholder="Alsaif" required>
+                        {% if form.last_name.errors %}
+                            <div class="invalid-feedback">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Hospital/Clinic Name Field - Initially hidden -->
+                <div class="mb-4" id="hospital-name-field" style="display: none;">
+                    <label for="hospital_name" class="form-label">Hospital/Clinic Name <span class="text-danger">*</span></label>
+                    <input type="text" name="hospital_name" id="hospital_name" 
+                        class="form-control" 
+                        placeholder="Enter hospital or clinic name">
+                    <div class="invalid-feedback">Please enter the hospital/clinic name</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.national_id.id_for_label }}" id="id-label" class="form-label">National ID / IQAMA <span class="text-danger">*</span></label>
+                    <input type="text" name="{{ form.national_id.name }}" id="{{ form.national_id.id_for_label }}" 
+                        class="form-control {% if form.national_id.errors %}is-invalid{% endif %}" 
+                        placeholder="1000300033" required>
+                    {% if form.national_id.errors %}
+                        <div class="invalid-feedback">{{ form.national_id.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                        class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                        placeholder="m@gmail.com" required>
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <span class="saudi-flag-icon"></span>
+                            +966
+                        </span>
+                        <input type="text" name="{{ form.phone_number.name }}" id="{{ form.phone_number.id_for_label }}" 
+                            class="form-control phone-input {% if form.phone_number.errors %}is-invalid{% endif %}" 
+                            placeholder="5xxxxxxxx" required>
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback">{{ form.phone_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">Enter the number without the country code</small>
+                </div>
+                
+                {% if view.kwargs.user_type == 'healthcare_provider' %}
+                <div class="mb-4">
+                    <label for="{{ form.healthcare_provider_type.id_for_label }}" class="form-label">Healthcare provider type <span class="text-danger">*</span></label>
+                    <select name="{{ form.healthcare_provider_type.name }}" id="{{ form.healthcare_provider_type.id_for_label }}" 
+                        class="form-select {% if form.healthcare_provider_type.errors %}is-invalid{% endif %}" required>
+                        {% for value, text in form.healthcare_provider_type.field.choices %}
+                            <option value="{{ value }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.healthcare_provider_type.errors %}
+                        <div class="invalid-feedback">{{ form.healthcare_provider_type.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                {% if view.kwargs.user_type == 'company' %}
+                <div class="mb-4">
+                    <label for="{{ form.company_name.id_for_label }}" class="form-label">Company Name <span class="text-danger">*</span></label>
+                    <input type="text" name="{{ form.company_name.name }}" id="{{ form.company_name.id_for_label }}" 
+                        class="form-control {% if form.company_name.errors %}is-invalid{% endif %}" required>
+                    {% if form.company_name.errors %}
+                        <div class="invalid-feedback">{{ form.company_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="mb-4">
+                    <label for="{{ form.region.id_for_label }}" class="form-label">Region <span class="text-danger">*</span></label>
+                    <select name="{{ form.region.name }}" id="{{ form.region.id_for_label }}" 
+                        class="form-select {% if form.region.errors %}is-invalid{% endif %}" required>
+                        <option value="Riyadh" selected>Riyadh</option>
+                        <option value="Makkah">Makkah</option>
+                        <option value="Madinah">Madinah</option>
+                        <option value="Eastern Province">Eastern Province</option>
+                        <option value="Asir">Asir</option>
+                        <option value="Tabuk">Tabuk</option>
+                        <option value="Hail">Hail</option>
+                        <option value="Northern Borders">Northern Borders</option>
+                        <option value="Jazan">Jazan</option>
+                        <option value="Najran">Najran</option>
+                        <option value="Al Bahah">Al Bahah</option>
+                        <option value="Al Jawf">Al Jawf</option>
+                        <option value="Qassim">Qassim</option>
+                    </select>
+                    {% if form.region.errors %}
+                        <div class="invalid-feedback">{{ form.region.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.city.id_for_label }}" class="form-label">City <span class="text-danger">*</span></label>
+                    <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                        class="form-select {% if form.city.errors %}is-invalid{% endif %}" required>
+                        <option value="Riyadh" selected>Riyadh</option>
+                        <option value="Jeddah">Jeddah</option>
+                        <option value="Makkah">Makkah</option>
+                        <option value="Madinah">Madinah</option>
+                        <option value="Dammam">Dammam</option>
+                        <option value="Taif">Taif</option>
+                        <option value="Tabuk">Tabuk</option>
+                        <option value="Buraidah">Buraidah</option>
+                        <option value="Khobar">Khobar</option>
+                        <option value="Abha">Abha</option>
+                    </select>
+                    {% if form.city.errors %}
+                        <div class="invalid-feedback">{{ form.city.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.district.id_for_label }}" class="form-label">District <span class="text-danger">*</span></label>
+                    <select name="{{ form.district.name }}" id="{{ form.district.id_for_label }}" 
+                        class="form-select {% if form.district.errors %}is-invalid{% endif %}" required>
+                        <option value="Riyadh" selected>Riyadh</option>
+                        <option value="Al Olaya">Al Olaya</option>
+                        <option value="Al Malaz">Al Malaz</option>
+                        <option value="Al Naseem">Al Naseem</option>
+                        <option value="Al Rawdah">Al Rawdah</option>
+                        <option value="Al Sulimaniyah">Al Sulimaniyah</option>
+                        <option value="Al Nakheel">Al Nakheel</option>
+                        <option value="Al Muruj">Al Muruj</option>
+                        <option value="Al Yasmin">Al Yasmin</option>
+                        <option value="Al Sahafah">Al Sahafah</option>
+                    </select>
+                    {% if form.district.errors %}
+                        <div class="invalid-feedback">{{ form.district.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Username <span class="text-danger">*</span></label>
+                        <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                            class="form-control {% if form.username.errors %}is-invalid{% endif %}" required>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" 
+                            class="form-control {% if form.password1.errors %}is-invalid{% endif %}" required>
+                        {% if form.password1.errors %}
+                            <div class="invalid-feedback">{{ form.password1.errors.0 }}</div>
+                        {% else %}
+                            <div class="form-text small">{{ form.password1.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" 
+                            class="form-control {% if form.password2.errors %}is-invalid{% endif %}" required>
+                        {% if form.password2.errors %}
+                            <div class="invalid-feedback">{{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-4 form-check">
+                    <input type="checkbox" name="{{ form.terms_accepted.name }}" id="{{ form.terms_accepted.id_for_label }}" 
+                        class="form-check-input {% if form.terms_accepted.errors %}is-invalid{% endif %}" required>
+                    <label for="{{ form.terms_accepted.id_for_label }}" class="form-check-label">
+                        Agree to the terms and conditions, I clarify that the above information is correct. 
+                        <a href="#" class="text-success">Terms & Conditions</a>.
+                    </label>
+                    {% if form.terms_accepted.errors %}
+                        <div class="invalid-feedback">{{ form.terms_accepted.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'user_type_selection' %}" class="btn btn-outline-secondary">Back</a>
+                    <button type="submit" class="btn btn-success-custom">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid footer-custom">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-3">Healthcare Portal</h5>
+                <p class="mb-3">Providing advanced healthcare solutions for providers and patients across Saudi Arabia.</p>
+                <div class="d-flex">
+                    <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h6 class="mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="mb-2"><a href="#">About Us</a></li>
+                    <li class="mb-2"><a href="#">Services</a></li>
+                    <li class="mb-2"><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h6 class="mb-3">Support</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#">Help Center</a></li>
+                    <li class="mb-2"><a href="#">FAQs</a></li>
+                    <li class="mb-2"><a href="#">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="mb-3">Contact Us</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Riyadh, Saudi Arabia</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> +966 11 123 4567</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@healthcare.sa</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid border-top border-secondary py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; 2025 Healthcare Portal. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>Developed by Healthcare IT Team</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the provider type select element
+        const providerTypeSelect = document.getElementById('{{ form.healthcare_provider_type.id_for_label }}');
+        
+        // If the provider type select exists (for healthcare provider registration)
+        if (providerTypeSelect) {
+            // Function to toggle fields based on provider type
+            function toggleFields() {
+                const selectedValue = providerTypeSelect.value;
+                const personalNameFields = document.getElementById('personal-name-fields');
+                const hospitalNameField = document.getElementById('hospital-name-field');
+                const idLabel = document.getElementById('id-label');
+                const nationalIdField = document.getElementById('{{ form.national_id.id_for_label }}');
+                
+                if (selectedValue === 'clinic') {
+                    // Hide personal name fields and show hospital name field
+                    personalNameFields.style.display = 'none';
+                    hospitalNameField.style.display = 'block';
+                    
+                    // Change label for ID field
+                    idLabel.textContent = 'Commercial Registration Number (CRN) *';
+                    nationalIdField.placeholder = 'Enter CRN number';
+                    
+                    // Update first and last name with hospital name value
+                    const hospitalNameInput = document.getElementById('hospital_name');
+                    hospitalNameInput.addEventListener('input', function() {
+                        document.getElementById('{{ form.first_name.id_for_label }}').value = this.value;
+                        document.getElementById('{{ form.last_name.id_for_label }}').value = 'Hospital';
+                    });
+                } else {
+                    // Show personal name fields and hide hospital name field
+                    personalNameFields.style.display = 'flex';
+                    hospitalNameField.style.display = 'none';
+                    
+                    // Reset label for ID field
+                    idLabel.textContent = 'National ID / IQAMA *';
+                    nationalIdField.placeholder = '1000300033';
+                }
+            }
+            
+            // Run on page load
+            toggleFields();
+            
+            // Run when provider type changes
+            providerTypeSelect.addEventListener('change', toggleFields);
+        }
+    });
+</script>
+{% endblock %}

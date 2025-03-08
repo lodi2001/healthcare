@@ -1,0 +1,213 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Clinic Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header bg-success text-white p-4 mb-4">
+    <div class="container-fluid">
+        <h1 class="mb-0">Healthcare Provider Dashboard</h1>
+        <p class="mb-0">Welcome to your healthcare provider dashboard, {{ user.first_name }} {{ user.last_name }}.</p>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h4 class="mb-0">Statistics</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- First row of statistics -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ visits|default:"0" }}</h3>
+                            <p class="text-muted mb-0">Visits</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ medications|default:"4" }}</h3>
+                            <p class="text-muted mb-0">Medications</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ lab_results|default:"15" }}</h3>
+                            <p class="text-muted mb-0">Lab Results</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ vaccinations|default:"20" }}</h3>
+                            <p class="text-muted mb-0">Vaccinations</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Second row of statistics -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ total_lookups|default:"11" }}</h3>
+                            <p class="text-muted mb-0">Total Lookups</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ variants|default:"20" }}</h3>
+                            <p class="text-muted mb-0">Variants</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ reports|default:"0" }}</h3>
+                            <p class="text-muted mb-0">Reports</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <h3 class="mb-0 text-success">{{ sequenced_samples|default:"0" }}</h3>
+                            <p class="text-muted mb-0">Sequenced Samples</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Services Section -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h4 class="mb-0">Quick Services</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Medication Check -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Medication Check</h5>
+                            <p class="card-text">Check medication interactions and side effects</p>
+                            <a href="#" class="btn btn-success">Access</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dose Calculator -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Dose Calculator</h5>
+                            <p class="card-text">Calculate medication dosages based on patient data</p>
+                            <a href="#" class="btn btn-success">Access</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Genome Analysis -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Genome Analysis</h5>
+                            <p class="card-text">Analyze patient genomic data for clinical insights</p>
+                            <a href="#" class="btn btn-success">Access</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Travel History -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Travel History</h5>
+                            <p class="card-text">View patient travel history for epidemiological analysis</p>
+                            <a href="#" class="btn btn-success">Access</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Management Section -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Manage Doctors</h4>
+            <a href="{% url 'doctor_create' %}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Add New Doctor
+            </a>
+        </div>
+        <div class="card-body">
+            {% if doctors %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialty</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Services</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors %}
+                                <tr>
+                                    <td>{{ doctor.get_full_name }}</td>
+                                    <td>{{ doctor.profile.metadata.specialty|default:"General" }}</td>
+                                    <td>{{ doctor.email }}</td>
+                                    <td>{{ doctor.phone_number }}</td>
+                                    <td>{{ doctor.provider_services.count }}</td>
+                                    <td>
+                                        <a href="{% url 'doctor_detail' doctor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'doctor_update' doctor.id %}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'doctor_services' doctor.id %}" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-stethoscope"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="fas fa-user-md fa-3x text-muted"></i>
+                    </div>
+                    <p class="text-muted">No doctors added yet</p>
+                    <a href="{% url 'doctor_create' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i> Add Your First Doctor
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

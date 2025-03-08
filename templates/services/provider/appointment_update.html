@@ -1,0 +1,126 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Update Appointment" %} - {{ appointment.patient.get_full_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .appointment-form {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        padding: 25px;
+    }
+    .patient-info {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .appointment-details {
+        background-color: #f0f7ff;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .status-badge {
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back Button -->
+    <div class="mb-3">
+        <a href="{% url 'provider_appointment_detail' object.id %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans "Back to Appointment Details" %}
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4 text-center">{% trans "Update Appointment" %}</h2>
+            
+            <!-- Appointment Information -->
+            <div class="appointment-details mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="mb-1">{{ object.patient.get_full_name }}</h5>
+                        <p class="mb-0 text-muted">
+                            <i class="fas fa-calendar-day me-1"></i> {{ object.appointment_date|date:"l, F j, Y" }}
+                        </p>
+                        <p class="mb-0 text-muted">
+                            <i class="fas fa-clock me-1"></i> {{ object.start_time|time:"g:i A" }} - {{ object.end_time|time:"g:i A" }}
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">
+                            <span class="badge 
+                                {% if object.status == 'completed' %}bg-success
+                                {% elif object.status == 'cancelled' %}bg-danger
+                                {% elif object.status == 'no_show' %}bg-warning
+                                {% elif object.status == 'confirmed' %}bg-primary
+                                {% else %}bg-secondary{% endif %} status-badge">
+                                {{ object.get_status_display }}
+                            </span>
+                        </p>
+                        <p class="mb-0 text-muted">
+                            <i class="fas fa-stethoscope me-1"></i> {{ object.provider_service.service.name }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Update Form -->
+            <div class="appointment-form">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Status Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.status.id_for_label }}" class="form-label">{% trans "Appointment Status" %} <span class="text-danger">*</span></label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.status.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Notes Field -->
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">{% trans "Notes" %}</label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.notes.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            {% trans "Add any notes about this appointment (visible to both provider and patient)" %}
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> {% trans "Update Appointment" %}
+                        </button>
+                        <a href="{% url 'provider_appointment_detail' object.id %}" class="btn btn-outline-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

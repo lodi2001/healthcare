@@ -1,0 +1,273 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Healthcare Provider Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid header-green py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Provider Dashboard</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Healthcare Provider Dashboard</h2>
+        <p class="text-white-50">Manage your services, appointments, and availability</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Dashboard Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check text-success fa-3x mb-3"></i>
+                    <h5 class="card-title">Total Appointments</h5>
+                    <h2 class="mb-0">{{ total_appointments }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-stethoscope text-success fa-3x mb-3"></i>
+                    <h5 class="card-title">Services Offered</h5>
+                    <h2 class="mb-0">{{ total_services }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <h5 class="card-title">Completed</h5>
+                    <h2 class="mb-0">{{ status_counts.completed|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock text-warning fa-3x mb-3"></i>
+                    <h5 class="card-title">Upcoming</h5>
+                    <h2 class="mb-0">{{ status_counts.scheduled|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{% url 'provider_services' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-list-alt me-2"></i> Manage Services
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{% url 'provider_appointments' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-calendar-alt me-2"></i> View Appointments
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <a href="{% url 'provider_availability' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-clock me-2"></i> Set Availability
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'provider_reviews' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-star me-2"></i> View Reviews
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Upcoming Appointments</h5>
+                    <a href="{% url 'provider_appointments' %}" class="btn btn-sm btn-outline-success">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_appointments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Patient</th>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in upcoming_appointments %}
+                                        <tr>
+                                            <td>{{ appointment.appointment_date }}</td>
+                                            <td>{{ appointment.start_time }} - {{ appointment.end_time }}</td>
+                                            <td>{{ appointment.patient.get_full_name }}</td>
+                                            <td>{{ appointment.provider_service.service.name }}</td>
+                                            <td>
+                                                {% if appointment.status == 'scheduled' %}
+                                                    <span class="badge bg-info">Scheduled</span>
+                                                {% elif appointment.status == 'confirmed' %}
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'provider_appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-alt text-muted fa-3x mb-3"></i>
+                            <p class="mb-0">No upcoming appointments scheduled</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Statistics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Service Statistics</h5>
+                </div>
+                <div class="card-body">
+                    {% if service_stats %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Category</th>
+                                        <th>Total Appointments</th>
+                                        <th>Completed</th>
+                                        <th>Average Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in service_stats %}
+                                        <tr>
+                                            <td>{{ stat.service.service.name }}</td>
+                                            <td>{{ stat.service.service.category.name }}</td>
+                                            <td>{{ stat.appointments_count }}</td>
+                                            <td>{{ stat.completed_count }}</td>
+                                            <td>
+                                                {% if stat.avg_rating > 0 %}
+                                                    <div class="d-flex align-items-center">
+                                                        {{ stat.avg_rating|floatformat:1 }}
+                                                        <div class="ms-2">
+                                                            {% for i in "12345" %}
+                                                                {% if forloop.counter <= stat.avg_rating|floatformat:"0" %}
+                                                                    <i class="fas fa-star text-warning"></i>
+                                                                {% elif forloop.counter <= stat.avg_rating|add:"0.5"|floatformat:"0" %}
+                                                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                                                {% else %}
+                                                                    <i class="far fa-star text-warning"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-muted">No ratings</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar text-muted fa-3x mb-3"></i>
+                            <p class="mb-0">No service statistics available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid footer-custom">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-3">Healthcare Portal</h5>
+                <p class="mb-3">Providing advanced healthcare solutions for providers and patients across Saudi Arabia.</p>
+                <div class="d-flex">
+                    <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h6 class="mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="mb-2"><a href="#">About Us</a></li>
+                    <li class="mb-2"><a href="#">Services</a></li>
+                    <li class="mb-2"><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h6 class="mb-3">Support</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#">Help Center</a></li>
+                    <li class="mb-2"><a href="#">FAQs</a></li>
+                    <li class="mb-2"><a href="#">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="mb-3">Contact Us</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Riyadh, Saudi Arabia</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> +966 11 123 4567</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@healthcare.sa</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid border-top border-secondary py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; 2025 Healthcare Portal. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>Developed by Healthcare IT Team</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,608 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Healthcare Provider Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header bg-gradient-primary text-white p-4 mb-4 rounded shadow-sm">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0 mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Healthcare Provider Dashboard</li>
+            </ol>
+        </nav>
+        <h1 class="mb-0">Healthcare Provider Dashboard</h1>
+        <p class="mb-0">Welcome {{ user.first_name }} {{ user.last_name }}</p>
+    </div>
+</div>
+
+<!-- Dashboard Stats -->
+<div class="container-fluid mb-4">
+    <div class="row">
+        <!-- Total Services -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-primary-soft">
+                            <i class="fas fa-stethoscope text-primary"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Total Services</h5>
+                    <h2 class="mb-0 counter">{{ services|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Doctors -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-success-soft">
+                            <i class="fas fa-user-md text-success"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Total Doctors</h5>
+                    <h2 class="mb-0 counter">{{ doctors|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Patients -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-info-soft">
+                            <i class="fas fa-users text-info"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Total Patients</h5>
+                    <h2 class="mb-0 counter">{{ patients|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Appointments -->
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="icon-circle bg-warning-soft">
+                            <i class="fas fa-calendar-check text-warning"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title">Total Appointments</h5>
+                    <h2 class="mb-0 counter">{{ appointments|default:"0" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="container-fluid mb-4">
+    <h5 class="mb-3 text-primary">Quick Actions</h5>
+    <div class="row">
+        <!-- Manage Doctors -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'admin_doctor_list' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary-soft mx-auto mb-3">
+                        <i class="fas fa-user-md text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Manage Doctors</h5>
+                    <p class="card-text text-muted small">Add, edit or manage your doctors</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Manage Services -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_services' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success-soft mx-auto mb-3">
+                        <i class="fas fa-medkit text-success"></i>
+                    </div>
+                    <h5 class="card-title">Manage Services</h5>
+                    <p class="card-text text-muted small">Add, edit or remove your medical services</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- View Appointments -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_appointments' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info-soft mx-auto mb-3">
+                        <i class="fas fa-calendar-alt text-info"></i>
+                    </div>
+                    <h5 class="card-title">View Appointments</h5>
+                    <p class="card-text text-muted small">Manage your patient appointments</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Add Doctor -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'admin_doctor_add' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning-soft mx-auto mb-3">
+                        <i class="fas fa-user-plus text-warning"></i>
+                    </div>
+                    <h5 class="card-title">Add Doctor</h5>
+                    <p class="card-text text-muted small">Add a new doctor to your practice</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Actions -->
+<div class="container-fluid mb-4">
+    <div class="row">
+        <!-- Set Availability -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_availability' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-danger-soft mx-auto mb-3">
+                        <i class="fas fa-clock text-danger"></i>
+                    </div>
+                    <h5 class="card-title">Set Availability</h5>
+                    <p class="card-text text-muted small">Define working hours and breaks</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Patient Lookup -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_patient_search' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-secondary-soft mx-auto mb-3">
+                        <i class="fas fa-search text-secondary"></i>
+                    </div>
+                    <h5 class="card-title">Patient Lookup</h5>
+                    <p class="card-text text-muted small">Search for patients in the system</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- View Reviews -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'provider_reviews' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success-soft mx-auto mb-3">
+                        <i class="fas fa-star text-success"></i>
+                    </div>
+                    <h5 class="card-title">View Reviews</h5>
+                    <p class="card-text text-muted small">See what your patients are saying</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Health Plans -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary-soft mx-auto mb-3">
+                        <i class="fas fa-file-medical text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Health Plans</h5>
+                    <p class="card-text text-muted small">Manage accepted health plans</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Clinical Services -->
+<div class="container-fluid mb-4">
+    <h5 class="mb-3 text-primary">Clinical Services</h5>
+    <div class="row">
+        <!-- Genome Analysis -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'genomic_services' %}?service=genome_analysis" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info-soft mx-auto mb-3">
+                        <i class="fas fa-dna text-info"></i>
+                    </div>
+                    <h5 class="card-title">Genome Analysis</h5>
+                    <p class="card-text text-muted small">Analyze patient genomic data</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Medication Check -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=medication_check" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-warning-soft mx-auto mb-3">
+                        <i class="fas fa-pills text-warning"></i>
+                    </div>
+                    <h5 class="card-title">Medication Check</h5>
+                    <p class="card-text text-muted small">Check medication interactions</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Dose Calculator -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=dose_calculator" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success-soft mx-auto mb-3">
+                        <i class="fas fa-calculator text-success"></i>
+                    </div>
+                    <h5 class="card-title">Dose Calculator</h5>
+                    <p class="card-text text-muted small">Calculate medication dosages</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Travel History -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=travel_history" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary-soft mx-auto mb-3">
+                        <i class="fas fa-plane text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Travel History</h5>
+                    <p class="card-text text-muted small">View patient travel history</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Reports & Analytics -->
+<div class="container-fluid mb-4">
+    <h5 class="mb-3 text-primary">Reports & Analytics</h5>
+    <div class="row">
+        <!-- Patient Reports -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=patient_reports" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-danger-soft mx-auto mb-3">
+                        <i class="fas fa-file-medical-alt text-danger"></i>
+                    </div>
+                    <h5 class="card-title">Patient Reports</h5>
+                    <p class="card-text text-muted small">View and generate patient reports</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Lab Results -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=lab_results" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-info-soft mx-auto mb-3">
+                        <i class="fas fa-vial text-info"></i>
+                    </div>
+                    <h5 class="card-title">Lab Results</h5>
+                    <p class="card-text text-muted small">Access patient lab results</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Vaccination Records -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=vaccinations" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-success-soft mx-auto mb-3">
+                        <i class="fas fa-syringe text-success"></i>
+                    </div>
+                    <h5 class="card-title">Vaccination Records</h5>
+                    <p class="card-text text-muted small">Track patient vaccinations</p>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Analytics Dashboard -->
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'clinical_services' %}?service=analytics" class="card border-0 shadow-sm action-card h-100">
+                <div class="card-body text-center">
+                    <div class="icon-circle bg-primary-soft mx-auto mb-3">
+                        <i class="fas fa-chart-line text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Analytics Dashboard</h5>
+                    <p class="card-text text-muted small">View healthcare analytics</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Prediction & Alerts -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-bell me-2"></i>Prediction Alerts
+            </h5>
+            <a href="{% url 'clinical_services' %}?service=alerts" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+            {% if health_plans %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Patient</th>
+                                <th>Notification</th>
+                                <th>Severity</th>
+                                <th>Severity Level</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plan in health_plans %}
+                                <tr>
+                                    <td>{{ plan.patient.user.first_name }} {{ plan.patient.user.last_name }}</td>
+                                    <td>{{ plan.get_alert_type_display }}</td>
+                                    <td>{{ plan.get_severity_display }}</td>
+                                    <td>
+                                        {% if plan.severity == 'high' %}
+                                            <div class="progress">
+                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        {% elif plan.severity == 'medium' %}
+                                            <div class="progress">
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        {% else %}
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Send Alert</button>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="icon-circle bg-light mx-auto mb-3">
+                                            <i class="fas fa-bell-slash text-muted"></i>
+                                        </div>
+                                        <h6 class="text-muted">No prediction alerts</h6>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="icon-circle bg-light mx-auto mb-3">
+                        <i class="fas fa-bell-slash text-muted"></i>
+                    </div>
+                    <h6 class="text-muted">No prediction alerts found</h6>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-calendar-day me-2"></i>Recent Appointments
+            </h5>
+            <a href="{% url 'provider_appointments' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+            {% if recent_appointments %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Patient</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                                <tr>
+                                    <td>{{ appointment.patient.get_full_name }}</td>
+                                    <td>{{ appointment.provider_service.service.name }}</td>
+                                    <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                                    <td>{{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}</td>
+                                    <td>
+                                        {% if appointment.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="badge bg-primary">Confirmed</span>
+                                        {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% elif appointment.status == 'no_show' %}
+                                            <span class="badge bg-secondary">No Show</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'provider_appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="icon-circle bg-light mx-auto mb-3">
+                        <i class="fas fa-calendar-times text-muted"></i>
+                    </div>
+                    <h6 class="text-muted">No recent appointments found</h6>
+                    <a href="{% url 'provider_schedule_appointment' %}" class="btn btn-sm btn-primary mt-2">
+                        <i class="fas fa-plus me-1"></i>Schedule Appointment
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Doctor List -->
+<div class="container-fluid mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-user-md me-2"></i>Your Doctors
+            </h5>
+            <a href="{% url 'admin_doctor_add' %}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-plus me-1"></i>Add Doctor
+            </a>
+        </div>
+        <div class="card-body p-0">
+            {% if doctors_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialty</th>
+                                <th>Services</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doctor in doctors_list %}
+                                <tr>
+                                    <td>Dr. {{ doctor.get_full_name }}</td>
+                                    <td>{{ doctor.profile.metadata.specialty }}</td>
+                                    <td>{{ doctor.provider_services.count }}</td>
+                                    <td>
+                                        {% if doctor.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'admin_doctor_edit' doctor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-medkit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="icon-circle bg-light mx-auto mb-3">
+                        <i class="fas fa-user-md text-muted"></i>
+                    </div>
+                    <h6 class="text-muted">No doctors found</h6>
+                    <a href="{% url 'admin_doctor_add' %}" class="btn btn-sm btn-primary mt-2">
+                        <i class="fas fa-plus me-1"></i>Add Doctor
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard styling */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    /* Icon styling */
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .icon-circle i {
+        font-size: 28px;
+    }
+    
+    /* Soft background colors */
+    .bg-primary-soft {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+    
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+    
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .bg-info-soft {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+    }
+    
+    .bg-danger-soft {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+    
+    .bg-secondary-soft {
+        background-color: rgba(108, 117, 125, 0.1) !important;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    
+    /* Card hover effects */
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+    
+    .action-card {
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
+    
+    /* Table styling */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,0,0,.03);
+    }
+    
+    /* Counter animation */
+    .counter {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+{% endblock %}

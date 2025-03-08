@@ -1,0 +1,340 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Patient Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Patient Dashboard</h2>
+        <p class="lead">Welcome to your patient dashboard, {{ user.first_name }} {{ user.last_name }}.</p>
+    </div>
+</div>
+
+<!-- Personal Health Information -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">My Health Summary</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ personal_health_records }}</h3>
+                                <p class="text-muted mb-0">Health Records</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ health_plans }}</h3>
+                                <p class="text-muted mb-0">Health Plans</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ appointments }}</h3>
+                                <p class="text-muted mb-0">Upcoming Appointments</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Services Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Quick Services</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">View Health Records</h5>
+                                <p class="card-text">Access your complete health records</p>
+                                <button id="viewHealthRecordsBtn" class="btn btn-primary">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Schedule Appointment</h5>
+                                <p class="card-text">Book a new appointment with a healthcare provider</p>
+                                <button id="scheduleAppointmentBtn" class="btn btn-primary">Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Medication Reminders</h5>
+                                <p class="card-text">Set up reminders for your medications</p>
+                                <button id="medicationRemindersBtn" class="btn btn-primary">Set Up</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Genomic Results</h5>
+                                <p class="card-text">View your genomic testing results</p>
+                                <button id="genomicResultsBtn" class="btn btn-primary">View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Records Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">My Health Records</h4>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="healthRecordsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="visits-tab" data-bs-toggle="tab" data-bs-target="#visits" type="button" role="tab" aria-controls="visits" aria-selected="true">Visits</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="medications-tab" data-bs-toggle="tab" data-bs-target="#medications" type="button" role="tab" aria-controls="medications" aria-selected="false">Medications</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="lab-results-tab" data-bs-toggle="tab" data-bs-target="#lab-results" type="button" role="tab" aria-controls="lab-results" aria-selected="false">Lab Results</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="vaccinations-tab" data-bs-toggle="tab" data-bs-target="#vaccinations" type="button" role="tab" aria-controls="vaccinations" aria-selected="false">Vaccinations</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-3" id="healthRecordsTabContent">
+                    <div class="tab-pane fade show active" id="visits" role="tabpanel" aria-labelledby="visits-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Provider</th>
+                                        <th>Reason</th>
+                                        <th>Notes</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2025-02-15</td>
+                                        <td>Dr. Sarah Johnson</td>
+                                        <td>Annual checkup</td>
+                                        <td>Routine examination, all vitals normal</td>
+                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-01-10</td>
+                                        <td>Dr. Michael Chen</td>
+                                        <td>Flu symptoms</td>
+                                        <td>Prescribed antiviral medication</td>
+                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="medications" role="tabpanel" aria-labelledby="medications-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Medication</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Prescribing Provider</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Lisinopril</td>
+                                        <td>10mg</td>
+                                        <td>Once daily</td>
+                                        <td>2025-01-15</td>
+                                        <td>Ongoing</td>
+                                        <td>Dr. Sarah Johnson</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Atorvastatin</td>
+                                        <td>20mg</td>
+                                        <td>Once daily at bedtime</td>
+                                        <td>2025-01-15</td>
+                                        <td>Ongoing</td>
+                                        <td>Dr. Sarah Johnson</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="lab-results" role="tabpanel" aria-labelledby="lab-results-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Date</th>
+                                        <th>Result</th>
+                                        <th>Reference Range</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Complete Blood Count</td>
+                                        <td>2025-02-15</td>
+                                        <td>Normal</td>
+                                        <td>Various</td>
+                                        <td><span class="badge bg-success">Normal</span></td>
+                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lipid Panel</td>
+                                        <td>2025-02-15</td>
+                                        <td>LDL: 130 mg/dL</td>
+                                        <td>&lt;100 mg/dL</td>
+                                        <td><span class="badge bg-warning">Elevated</span></td>
+                                        <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vaccinations" role="tabpanel" aria-labelledby="vaccinations-tab">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Vaccine</th>
+                                        <th>Date</th>
+                                        <th>Provider</th>
+                                        <th>Next Due</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Influenza</td>
+                                        <td>2024-10-15</td>
+                                        <td>Dr. Sarah Johnson</td>
+                                        <td>2025-10-15</td>
+                                    </tr>
+                                    <tr>
+                                        <td>COVID-19 Booster</td>
+                                        <td>2024-11-20</td>
+                                        <td>Dr. Michael Chen</td>
+                                        <td>As recommended</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Plans Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">My Health Plans</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Plan Type</th>
+                                <th>Created Date</th>
+                                <th>Status</th>
+                                <th>Recommendations</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Hypertension Management</td>
+                                <td>2025-01-15</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <ul class="mb-0">
+                                        <li>Monitor blood pressure daily</li>
+                                        <li>Reduce sodium intake</li>
+                                        <li>Exercise 30 minutes daily</li>
+                                    </ul>
+                                </td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                            <tr>
+                                <td>Cholesterol Management</td>
+                                <td>2025-01-15</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <ul class="mb-0">
+                                        <li>Follow Mediterranean diet</li>
+                                        <li>Take statin medication as prescribed</li>
+                                        <li>Follow up with provider in 3 months</li>
+                                    </ul>
+                                </td>
+                                <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // View Health Records Button
+    document.getElementById('viewHealthRecordsBtn').addEventListener('click', function() {
+        document.getElementById('visits-tab').click();
+        window.scrollTo({
+            top: document.getElementById('healthRecordsTabs').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Schedule Appointment Button
+    document.getElementById('scheduleAppointmentBtn').addEventListener('click', function() {
+        alert('Appointment scheduling functionality will be implemented with backend integration');
+    });
+    
+    // Medication Reminders Button
+    document.getElementById('medicationRemindersBtn').addEventListener('click', function() {
+        alert('Medication reminders functionality will be implemented with backend integration');
+    });
+    
+    // Genomic Results Button
+    document.getElementById('genomicResultsBtn').addEventListener('click', function() {
+        alert('Genomic results functionality will be implemented with backend integration');
+    });
+</script>
+{% endblock %}

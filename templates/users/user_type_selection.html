@@ -1,0 +1,171 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Choose Login Type - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid bg-success text-white py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Login Type</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Choose log in type</h2>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <!-- Healthcare Provider Card -->
+        <div class="col-md-4 col-lg-2 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-hospital-user fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">Healthcare Provider</h5>
+                    <p class="card-text small text-muted">For private and government healthcare institutions providers.</p>
+                    <div class="mt-auto text-center">
+                        <a href="{% url 'user_registration' user_type='healthcare_provider' %}" class="btn btn-success w-100">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Companies Card -->
+        <div class="col-md-4 col-lg-2 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-building fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">Companies</h5>
+                    <p class="card-text small text-muted">For pharmaceutical companies, biotech, and insurance companies.</p>
+                    <div class="mt-auto text-center">
+                        <a href="{% url 'user_registration' user_type='company' %}" class="btn btn-success w-100">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Government Card -->
+        <div class="col-md-4 col-lg-2 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-landmark fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">Government</h5>
+                    <p class="card-text small text-muted">Login for Government entities representatives.</p>
+                    <div class="mt-auto text-center">
+                        <a href="{% url 'user_registration' user_type='government' %}" class="btn btn-success w-100">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Researchers Card -->
+        <div class="col-md-4 col-lg-2 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-microscope fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">Researchers</h5>
+                    <p class="card-text small text-muted">For research centers and academic researchers.</p>
+                    <div class="mt-auto text-center">
+                        <a href="{% url 'user_registration' user_type='researcher' %}" class="btn btn-success w-100">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Patients Card -->
+        <div class="col-md-4 col-lg-2 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">Patients</h5>
+                    <p class="card-text small text-muted">Log in for patients or individuals.</p>
+                    <div class="mt-auto text-center">
+                        <a href="{% url 'login' %}?user_type=patient" class="btn btn-primary w-100">Go To Account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid bg-dark text-white py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- Overview Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Overview</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">About</a></li>
+                    <li><a href="#" class="text-white-50">Privacy and terms of use</a></li>
+                    <li><a href="#" class="text-white-50">News and events</a></li>
+                    <li><a href="#" class="text-white-50">Service level agreement</a></li>
+                </ul>
+            </div>
+            
+            <!-- Important Links Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Important links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">National service portal</a></li>
+                    <li><a href="#" class="text-white-50">Open government data</a></li>
+                    <li><a href="#" class="text-white-50">National strategy for data & Artificial intelligence</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact & Support Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Contact & support</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">Customer hub</a></li>
+                    <li><a href="#" class="text-white-50">Contact us</a></li>
+                    <li><a href="#" class="text-white-50">Submit complaint</a></li>
+                    <li><a href="#" class="text-white-50">Report complaint</a></li>
+                </ul>
+            </div>
+            
+            <!-- Social Media Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Social Media</h5>
+                <div class="d-flex">
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                </div>
+                
+                <h5 class="mt-4">Accessibility Tools</h5>
+                <div class="d-flex">
+                    <a href="#" class="text-white me-3"><i class="fas fa-volume-up"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fas fa-search-plus"></i></a>
+                    <a href="#" class="text-white"><i class="fas fa-adjust"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 pt-4 border-top border-secondary">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="small text-white-50">All Right Reserved For Digital Government Authority 2024</p>
+                    <p class="small text-white-50">Developed and Maintained by (insert the name of the entity)</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="{% static 'img/logo-white.png' %}" alt="Logo" height="50" class="me-3">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

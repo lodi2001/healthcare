@@ -1,0 +1,312 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Healthcare App{% endblock %}
+
+{% block extra_css %}
+<style>
+    .required-field label:after {
+        content: " *";
+        color: red;
+    }
+    .form-section {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 15px;
+        margin-bottom: 25px;
+    }
+    .form-section h5 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_list' %}">Doctors</a></li>
+            {% if action == 'Update' %}
+                <li class="breadcrumb-item"><a href="{% url 'admin_doctor_detail' doctor.id %}">{{ doctor.get_full_name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Basic Information Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-user me-2"></i>Basic Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 required-field">
+                                    {{ form.first_name.label_tag }}
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.first_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3 required-field">
+                                    {{ form.last_name.label_tag }}
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.last_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 required-field">
+                                    {{ form.email.label_tag }}
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.phone_number.label_tag }}
+                                    {{ form.phone_number }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.phone_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 required-field">
+                                    {{ form.national_id.label_tag }}
+                                    {{ form.national_id }}
+                                    {% if form.national_id.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.national_id.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.national_id.help_text %}
+                                        <small class="form-text text-muted">{{ form.national_id.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.department.label_tag }}
+                                    {{ form.department }}
+                                    {% if form.department.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.department.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Professional Information Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-user-md me-2"></i>Professional Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.specialty.label_tag }}
+                                    {{ form.specialty }}
+                                    {% if form.specialty.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.specialty.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.department.label_tag }}
+                                    {{ form.department }}
+                                    {% if form.department.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.department.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.qualifications.label_tag }}
+                                    {{ form.qualifications }}
+                                    {% if form.qualifications.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.qualifications.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.years_of_experience.label_tag }}
+                                    {{ form.years_of_experience }}
+                                    {% if form.years_of_experience.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.years_of_experience.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.license_number.label_tag }}
+                                    {{ form.license_number }}
+                                    {% if form.license_number.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.license_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.languages.label_tag }}
+                                    {{ form.languages }}
+                                    {% if form.languages.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.languages.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">{{ form.languages.help_text }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-info-circle me-2"></i>Additional Information</h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    {{ form.bio.label_tag }}
+                                    {{ form.bio }}
+                                    {% if form.bio.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.bio.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        {{ form.is_active }}
+                                        {{ form.is_active.label_tag }}
+                                    </div>
+                                    {% if form.is_active.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.is_active.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile Image Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-image me-2"></i>Profile Image</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {% if form.instance.profile.profile_image %}
+                                        <div class="mb-3">
+                                            <img src="{{ form.instance.profile.profile_image.url }}" alt="{{ form.instance.get_full_name }}" class="image-preview">
+                                        </div>
+                                    {% endif %}
+                                    {{ form.profile_image.label_tag }}
+                                    {{ form.profile_image }}
+                                    {% if form.profile_image.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.profile_image.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">{{ action }} Doctor</button>
+                            <a href="{% url 'admin_doctor_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Preview image before upload
+        $('#id_profile_image').change(function() {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    // If there's already a preview image, update it
+                    if ($('.image-preview').length) {
+                        $('.image-preview').attr('src', e.target.result);
+                    } else {
+                        // Create a new preview image
+                        var img = $('<img class="image-preview mb-3">');
+                        img.attr('src', e.target.result);
+                        $(img).insertBefore('#id_profile_image');
+                    }
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+</script>
+{% endblock %}

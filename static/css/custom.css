@@ -1,0 +1,180 @@
+/* Custom CSS for Healthcare Application */
+
+/* Saudi flag styling for phone input */
+.saudi-flag-icon {
+    display: inline-block;
+    width: 24px;
+    height: 16px;
+    background-color: #006c35; /* Saudi green */
+    position: relative;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.saudi-flag-icon:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 40%;
+    background-color: white;
+}
+
+/* Form styling */
+.form-control-with-icon {
+    padding-left: 45px;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.form-control.phone-input {
+    border-left: none;
+}
+
+/* Custom button styling */
+.btn-success-custom {
+    background-color: #006c35;
+    border-color: #006c35;
+}
+
+.btn-success-custom:hover {
+    background-color: #005a2b;
+    border-color: #005a2b;
+}
+
+/* Header styling */
+.header-green {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 0;
+}
+
+/* Navigation text color fix */
+.navbar a, .navbar .nav-link, .navbar .navbar-brand {
+    color: white !important;
+}
+
+/* Fix for all headings and text in green backgrounds */
+.bg-success, .bg-primary, .bg-success-custom, 
+[class*="bg-gradient-success"], [class*="bg-gradient-primary"],
+.navbar, .header-green {
+    color: white !important;
+}
+
+.bg-success a, .bg-primary a, .bg-success-custom a,
+[class*="bg-gradient-success"] a, [class*="bg-gradient-primary"] a,
+.navbar a, .header-green a {
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Ensure all text in green navigation areas is white */
+.navbar .nav-item .nav-link,
+.navbar-brand,
+.navbar-text,
+.navbar h1, .navbar h2, .navbar h3, .navbar h4, .navbar h5, .navbar h6,
+.navbar span, .navbar div {
+    color: white !important;
+}
+
+/* Fix for any blue text in green backgrounds */
+.text-primary {
+    color: #007bff !important;
+}
+
+.bg-success .text-primary, 
+.bg-primary .text-primary, 
+.navbar .text-primary,
+.header-green .text-primary,
+[class*="bg-gradient-success"] .text-primary,
+[class*="bg-gradient-primary"] .text-primary {
+    color: white !important;
+}
+
+/* Fix for card headers with green backgrounds */
+.card-header h6, 
+.card-header .text-primary,
+.card-header .font-weight-bold,
+.card-header * {
+    color: white !important;
+}
+
+/* Fix for "Filter Appointments" and "Appointments" headings */
+.card-header .m-0.font-weight-bold {
+    color: white !important;
+}
+
+/* Ensure all text in green sections is white */
+.bg-success *, 
+.bg-primary *, 
+.navbar *,
+.header-green *,
+[class*="bg-gradient-success"] *,
+[class*="bg-gradient-primary"] *,
+.card-header * {
+    color: white !important;
+}
+
+/* Footer styling */
+.footer-custom {
+    background-color: #2c3e50;
+    color: white;
+    padding: 30px 0;
+}
+
+.footer-custom a {
+    color: #ecf0f1;
+}
+
+.footer-custom a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Sidebar styling */
+.sidebar {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+/* Card styling for user type selection */
+.user-type-card {
+    transition: transform 0.3s;
+    height: 100%;
+}
+
+.user-type-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.user-type-icon {
+    font-size: 3rem;
+    color: #006c35;
+    margin-bottom: 15px;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-item a {
+    color: rgba(255,255,255,0.8);
+}
+
+.breadcrumb-item.active {
+    color: white;
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+    color: rgba(255,255,255,0.5);
+}

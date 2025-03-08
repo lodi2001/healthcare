@@ -1,0 +1,349 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Create Report - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Create New Report</h2>
+        <p class="lead">Create a new patient report</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'report_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Reports
+        </a>
+    </div>
+</div>
+
+<!-- Report Form -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Report Information</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_patient" class="form-label">Patient</label>
+                            {{ form.patient|add_class:"form-select" }}
+                            {% if form.patient.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.patient.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_type" class="form-label">Report Type</label>
+                            {{ form.type|add_class:"form-select" }}
+                            {% if form.type.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.type.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_status" class="form-label">Status</label>
+                            {{ form.status|add_class:"form-select" }}
+                            {% if form.status.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.status.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_date" class="form-label">Date</label>
+                            {{ form.date|add_class:"form-control"|attr:"type:date" }}
+                            {% if form.date.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.date.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="id_content" class="form-label">Report Content</label>
+                            {{ form.content|add_class:"form-control"|attr:"rows:10" }}
+                            {% if form.content.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.content.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">Create Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Selector -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Report Templates</h4>
+            </div>
+            <div class="card-body">
+                <p>Select a template to use as a starting point for your report:</p>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Genomic Report</h5>
+                                <p class="card-text">Template for genomic analysis reports</p>
+                                <button class="btn btn-primary template-btn" data-template="genomic">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Clinical Report</h5>
+                                <p class="card-text">Template for clinical examination reports</p>
+                                <button class="btn btn-primary template-btn" data-template="clinical">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Patient Report</h5>
+                                <p class="card-text">Template for general patient reports</p>
+                                <button class="btn btn-primary template-btn" data-template="patient">Use Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Template buttons
+        document.querySelectorAll('.template-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const templateType = this.getAttribute('data-template');
+                const contentField = document.getElementById('id_content');
+                const typeField = document.getElementById('id_type');
+                
+                // Set the report type
+                for (let i = 0; i < typeField.options.length; i++) {
+                    if (typeField.options[i].value === templateType) {
+                        typeField.selectedIndex = i;
+                        break;
+                    }
+                }
+                
+                // Set the template content based on type
+                if (templateType === 'genomic') {
+                    contentField.value = `GENOMIC ANALYSIS REPORT
+
+PATIENT INFORMATION:
+Name: [Patient Name]
+ID: [Patient ID]
+Date of Birth: [DOB]
+Sex: [Sex]
+
+SAMPLE INFORMATION:
+Sample ID: [Sample ID]
+Collection Date: [Collection Date]
+Sequencing Method: Whole Genome Sequencing
+Platform: Illumina NovaSeq 6000
+Coverage: 30x
+
+FINDINGS:
+1. Pathogenic Variants:
+   - Gene: BRCA1
+   - Variant: rs28897696
+   - Significance: Pathogenic
+   - Associated Conditions: Hereditary Breast and Ovarian Cancer Syndrome
+
+2. Variants of Uncertain Significance (VUS):
+   - Gene: TP53
+   - Variant: rs587782144
+   - Current Classification: VUS
+   - Recommendation: Clinical correlation advised
+
+3. Pharmacogenomic Findings:
+   - Gene: CYP2C19
+   - Variant: rs4244285
+   - Significance: Poor metabolizer
+   - Medication Implications: Clopidogrel, Escitalopram, Omeprazole
+
+RISK ASSESSMENT:
+- Type 2 Diabetes: Moderate risk (TCF7L2 variant)
+- Coronary Artery Disease: Low risk
+- Alzheimer's Disease: High risk (APOE e4 allele)
+
+RECOMMENDATIONS:
+1. Genetic counseling recommended to discuss findings
+2. Consider enhanced screening for breast and ovarian cancer
+3. Medication adjustments as noted in pharmacogenomic findings
+4. Family cascade testing recommended for first-degree relatives
+
+LIMITATIONS:
+This test does not detect all genetic variants associated with disease. Negative results do not guarantee absence of disease risk. Clinical correlation is essential.
+
+REPORT PREPARED BY:
+[Healthcare Provider Name]
+[Credentials]
+[Date]`;
+                } else if (templateType === 'clinical') {
+                    contentField.value = `CLINICAL EXAMINATION REPORT
+
+PATIENT INFORMATION:
+Name: [Patient Name]
+ID: [Patient ID]
+Date of Birth: [DOB]
+Sex: [Sex]
+
+VISIT INFORMATION:
+Date of Visit: [Visit Date]
+Reason for Visit: [Reason]
+Provider: [Provider Name]
+
+VITAL SIGNS:
+Blood Pressure: 138/88 mmHg
+Heart Rate: 76 bpm
+Respiratory Rate: 16 breaths/min
+Temperature: 36.8°C
+Weight: 82 kg
+Height: 175 cm
+BMI: 26.8 kg/m²
+
+CHIEF COMPLAINT:
+Patient reports occasional headaches and dizziness, particularly in the morning.
+
+HISTORY OF PRESENT ILLNESS:
+Patient has been experiencing intermittent headaches for approximately 3 months. Headaches are described as throbbing, primarily in the frontal region, and occasionally accompanied by dizziness. Symptoms are more pronounced in the morning and tend to improve throughout the day. No visual disturbances, nausea, or vomiting reported.
+
+PAST MEDICAL HISTORY:
+- Hyperlipidemia (diagnosed 2 years ago)
+- Seasonal allergies
+
+MEDICATIONS:
+- Atorvastatin 10mg daily
+- Loratadine 10mg as needed for allergies
+
+PHYSICAL EXAMINATION:
+General: Alert, oriented, in no acute distress
+HEENT: Normocephalic, atraumatic. Pupils equal, round, and reactive to light. Extraocular movements intact.
+Cardiovascular: Regular rate and rhythm. No murmurs, gallops, or rubs.
+Respiratory: Clear to auscultation bilaterally. No wheezes, rales, or rhonchi.
+Neurological: Cranial nerves II-XII intact. Motor strength 5/5 in all extremities. Sensation intact.
+
+ASSESSMENT:
+1. Mild hypertension
+2. Tension headaches, likely related to hypertension
+3. Hyperlipidemia, controlled on current medication
+
+PLAN:
+1. Start Lisinopril 10mg daily for hypertension
+2. Continue Atorvastatin 10mg daily
+3. Recommend lifestyle modifications:
+   - Regular exercise (30 minutes daily)
+   - Low sodium diet
+   - Stress management techniques
+   - Blood pressure monitoring twice weekly
+4. Follow-up in 4 weeks to assess response to treatment
+5. Complete blood panel and metabolic profile ordered
+
+RECOMMENDATIONS:
+Patient advised to monitor blood pressure at home and maintain a headache diary. Return sooner if symptoms worsen or new symptoms develop.
+
+REPORT PREPARED BY:
+[Healthcare Provider Name]
+[Credentials]
+[Date]`;
+                } else if (templateType === 'patient') {
+                    contentField.value = `PATIENT HEALTH SUMMARY REPORT
+
+PATIENT INFORMATION:
+Name: [Patient Name]
+ID: [Patient ID]
+Date of Birth: [DOB]
+Sex: [Sex]
+Contact: [Phone Number]
+Emergency Contact: [Emergency Contact Name and Number]
+
+HEALTH OVERVIEW:
+This report summarizes the current health status, recent medical history, and recommendations for the patient.
+
+CURRENT DIAGNOSES:
+1. Type 2 Diabetes Mellitus (diagnosed 2020)
+2. Essential Hypertension (diagnosed 2019)
+3. Osteoarthritis of the knee (diagnosed 2021)
+
+ALLERGIES:
+- Penicillin (hives)
+- Shellfish (anaphylaxis)
+
+CURRENT MEDICATIONS:
+1. Metformin 1000mg twice daily
+2. Lisinopril 20mg daily
+3. Acetaminophen 500mg as needed for pain
+4. Atorvastatin 20mg daily
+
+RECENT VISITS:
+1. Primary Care Follow-up (2024-01-15)
+   - HbA1c: 7.2%
+   - Blood Pressure: 132/84 mmHg
+   - Weight: 84 kg
+
+2. Orthopedic Consultation (2024-02-10)
+   - Knee X-ray showed moderate joint space narrowing
+   - Physical therapy recommended
+
+IMMUNIZATIONS:
+- Influenza vaccine (2023-10-15)
+- COVID-19 vaccine series completed (2021-04-20)
+- Pneumococcal vaccine (2022-05-10)
+
+PREVENTIVE CARE:
+- Colonoscopy (2022-06-15): No polyps, next due in 10 years
+- Mammogram (2023-11-20): Negative, annual follow-up recommended
+- Eye examination (2023-09-05): Mild diabetic retinopathy, follow-up in 6 months
+
+HEALTH GOALS:
+1. Improve glycemic control (target HbA1c < 7.0%)
+2. Weight reduction (target: 5% reduction in 6 months)
+3. Increase physical activity to 150 minutes per week
+4. Maintain blood pressure < 130/80 mmHg
+
+RECOMMENDATIONS:
+1. Continue current medication regimen
+2. Follow up with primary care in 3 months
+3. Complete physical therapy sessions for knee (2x weekly for 6 weeks)
+4. Schedule eye examination in March 2024
+5. Maintain diabetic diet and daily glucose monitoring
+
+REPORT PREPARED BY:
+[Healthcare Provider Name]
+[Credentials]
+[Date]`;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

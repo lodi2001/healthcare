@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Welcome - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4">Welcome to Healthcare App</h1>
+            <p class="lead">Integrating electronic health records and genomic data for better healthcare.</p>
+            
+            {% if user.is_authenticated %}
+                <div class="alert alert-info">
+                    Redirecting you to your dashboard...
+                </div>
+                <script>
+                    // Redirect to appropriate dashboard based on user type
+                    window.onload = function() {
+                        {% if user.user_type == 'healthcare_provider' %}
+                            window.location.href = "{% url 'healthcare_provider_dashboard' %}";
+                        {% elif user.user_type == 'patient' %}
+                            window.location.href = "{% url 'patient_dashboard' %}";
+                        {% elif user.user_type == 'company' %}
+                            window.location.href = "{% url 'company_dashboard' %}";
+                        {% elif user.user_type == 'government' %}
+                            window.location.href = "{% url 'government_dashboard' %}";
+                        {% elif user.user_type == 'researcher' %}
+                            window.location.href = "{% url 'researcher_dashboard' %}";
+                        {% endif %}
+                    };
+                </script>
+            {% else %}
+                <div class="mt-5">
+                    <a href="{% url 'user_type_selection' %}" class="btn btn-primary btn-lg">Get Started</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Electronic Health Records</h3>
+                    <p class="card-text">Access and manage comprehensive electronic health records with integrated patient data.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Genomic Data</h3>
+                    <p class="card-text">Leverage genomic data for personalized medicine and improved patient outcomes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">User-Specific Dashboards</h3>
+                    <p class="card-text">Tailored dashboards for healthcare providers, patients, companies, researchers, and government officials.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

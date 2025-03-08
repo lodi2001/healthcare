@@ -1,0 +1,280 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Doctor Details - {{ doctor.get_full_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doctor-profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+    }
+    .doctor-info-card {
+        border-left: 4px solid var(--primary-color);
+    }
+    .service-badge {
+        background-color: var(--light-color);
+        color: var(--dark-color);
+        font-weight: 500;
+    }
+    .schedule-day {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_list' %}">Doctors</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ doctor.get_full_name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Doctor Profile Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            {% if doctor.profile.profile_image %}
+                                <img src="{{ doctor.profile.profile_image.url }}" alt="{{ doctor.get_full_name }}" class="doctor-profile-img">
+                            {% else %}
+                                <img src="{% static 'images/default-profile.png' %}" alt="{{ doctor.get_full_name }}" class="doctor-profile-img">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h2>{{ doctor.get_full_name }}</h2>
+                            <p class="text-muted mb-2">{% if doctor.profile.metadata.specialty %}{{ doctor.profile.metadata.specialty }}{% else %}General{% endif %}</p>
+                            <p class="mb-2"><i class="fas fa-envelope me-2"></i> {{ doctor.email }}</p>
+                            <p class="mb-2"><i class="fas fa-phone me-2"></i> {{ doctor.phone_number|default:"Not provided" }}</p>
+                            <p class="mb-3"><i class="fas fa-hospital me-2"></i> {{ doctor.department|default:"Not assigned" }}</p>
+                            
+                            <div class="action-buttons">
+                                <a href="{% url 'admin_doctor_edit' doctor.id %}" class="btn btn-outline-primary"><i class="fas fa-edit me-1"></i> Edit Profile</a>
+                                <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-outline-success"><i class="fas fa-stethoscope me-1"></i> Manage Services</a>
+                                <a href="{% url 'admin_doctor_schedule' doctor.id %}" class="btn btn-outline-info"><i class="fas fa-calendar-alt me-1"></i> Manage Schedule</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Information -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user-md me-2"></i> Professional Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Specialty</h6>
+                        <p>{{ doctor.profile.metadata.specialty|default:"Not specified" }}</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Qualifications</h6>
+                        <p>{{ doctor.profile.metadata.qualifications|default:"Not specified" }}</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Experience</h6>
+                        <p>{{ doctor.profile.metadata.years_of_experience|default:"0" }} years</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">License Number</h6>
+                        <p>{{ doctor.profile.metadata.license_number|default:"Not provided" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Additional Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">National ID/(IQAMA)</h6>
+                        <p>{{ doctor.national_id|default:"Not provided" }}</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Languages</h6>
+                        <p>{{ doctor.profile.metadata.languages|default:"Not specified" }}</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Biography</h6>
+                        <p>{{ doctor.profile.metadata.bio|default:"No biography available"|linebreaks }}</p>
+                    </div>
+                    <div class="mb-3 doctor-info-card p-3">
+                        <h6 class="mb-2">Status</h6>
+                        <p>
+                            {% if doctor.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services and Schedule Preview -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-stethoscope me-2"></i> Services ({{ doctor_services|length }})</h5>
+                    <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if doctor_services %}
+                        <div class="list-group">
+                            {% for service in doctor_services|slice:":5" %}
+                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ service.service.name }}</h6>
+                                        <small class="text-muted">{{ service.service.category.name }}</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge service-badge me-2">{{ service.price_display }}</span>
+                                        <span class="badge service-badge">{{ service.duration_display }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if doctor_services|length > 5 %}
+                            <div class="text-center mt-3">
+                                <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-sm btn-outline-primary">View {{ doctor_services|length|add:"-5" }} more services</a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            No services have been added for this doctor.
+                            <a href="{% url 'admin_doctor_services' doctor.id %}" class="alert-link">Add services now</a>.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> Schedule</h5>
+                    <a href="{% url 'admin_doctor_schedule' doctor.id %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if schedules %}
+                        <div class="list-group">
+                            {% for schedule in schedules %}
+                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 schedule-day">{{ schedule.get_day_of_week_display }}</h6>
+                                    </div>
+                                    <div>
+                                        {{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}
+                                        {% if schedule.is_active %}
+                                            <span class="badge bg-success ms-2">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger ms-2">Inactive</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No schedule has been set for this doctor.
+                            <a href="{% url 'admin_doctor_schedule' doctor.id %}" class="alert-link">Set schedule now</a>.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i> Upcoming Appointments</h5>
+                    <a href="#" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Service</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>{{ appointment.patient.get_full_name }}</td>
+                                            <td>{{ appointment.provider_service.service.name }}</td>
+                                            <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                                            <td>{{ appointment.start_time|time:"H:i" }}</td>
+                                            <td>
+                                                {% if appointment.status == 'scheduled' %}
+                                                    <span class="badge bg-warning">Scheduled</span>
+                                                {% elif appointment.status == 'confirmed' %}
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                {% elif appointment.status == 'completed' %}
+                                                    <span class="badge bg-info">Completed</span>
+                                                {% elif appointment.status == 'cancelled' %}
+                                                    <span class="badge bg-danger">Cancelled</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <a href="#" class="btn btn-sm btn-outline-success">Update</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No upcoming appointments for this doctor.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Any additional JavaScript for the doctor detail page
+    $(document).ready(function() {
+        // Initialize any components that need JavaScript
+    });
+</script>
+{% endblock %}

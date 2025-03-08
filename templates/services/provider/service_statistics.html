@@ -1,0 +1,274 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Statistics" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+<style>
+    .stats-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #00897b;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+    .report-card {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    .new-badge {
+        background-color: #e3f2fd;
+        color: #2196f3;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    .report-id {
+        color: #2196f3;
+        font-weight: 500;
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+    }
+    .status-done {
+        background-color: #e8f5e9;
+        color: #4caf50;
+    }
+    .status-waiting {
+        background-color: #fff8e1;
+        color: #ffa000;
+    }
+    .table th {
+        font-weight: 500;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex align-items-center mb-4">
+        <i class="fas fa-chart-bar text-success me-2" style="font-size: 1.5rem;"></i>
+        <h1 class="mb-0">{% trans "Statistics" %}</h1>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="mb-4">{% trans "Statistics" %}</h5>
+            
+            <!-- Key Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card bg-white p-3">
+                        <div class="stats-number">{{ analyzed_reports }}</div>
+                        <div class="stats-label">Number of analyzed reports</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card bg-white p-3">
+                        <div class="stats-number">{{ number_of_requests }}</div>
+                        <div class="stats-label">Number of requests</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card bg-white p-3">
+                        <div class="stats-number">{{ total_reports }}</div>
+                        <div class="stats-label">Total Reports</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">{% trans "Bio EHR" %}</h5>
+                            <div class="chart-container">
+                                <canvas id="bioEhrChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">{% trans "Total Reports" %}</h5>
+                            <div class="chart-container">
+                                <canvas id="totalReportsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Latest Reports -->
+            <div class="mb-4">
+                <h5 class="mb-3">{% trans "Latest Reports" %}</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="report-card">
+                            <span class="new-badge mb-2 d-inline-block">New</span>
+                            <h6>RWD</h6>
+                            <div class="report-id">5185324524</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="report-card">
+                            <span class="new-badge mb-2 d-inline-block">New</span>
+                            <h6>RWE</h6>
+                            <div class="report-id">3445815425</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="report-card">
+                            <span class="new-badge mb-2 d-inline-block">New</span>
+                            <h6>Market access report</h6>
+                            <div class="report-id">5185224524</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Report Lookups -->
+            <div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">{% trans "Recent Report Lookups" %}</h5>
+                    <a href="#" class="text-decoration-none">View all</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Report Date</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in report_lookups %}
+                            <tr>
+                                <td><a href="#" class="report-id">{{ report.id }}</a></td>
+                                <td>{{ report.date }}</td>
+                                <td>{{ report.type }}</td>
+                                <td><span class="status-badge {% if report.status == 'Done' %}status-done{% else %}status-waiting{% endif %}">{{ report.status }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Bio EHR Chart
+        const bioEhrCtx = document.getElementById('bioEhrChart').getContext('2d');
+        const bioEhrChart = new Chart(bioEhrCtx, {
+            type: 'line',
+            data: {
+                labels: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                datasets: [
+                    {
+                        label: 'Dataset 1',
+                        data: [500, 750, 850, 300, 750, 600, 550, 700],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Dataset 2',
+                        data: [300, 450, 550, 250, 550, 450, 400, 500],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1000,
+                        ticks: {
+                            stepSize: 250
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Total Reports Chart
+        const totalReportsCtx = document.getElementById('totalReportsChart').getContext('2d');
+        const totalReportsChart = new Chart(totalReportsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['General', 'Patient', 'Clinical', 'Genomic'],
+                datasets: [{
+                    data: [8.1, 9.1, 9.1, 72.7],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Delete Service - {{ doctor.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_list' %}">Doctors</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_detail' doctor.id %}">{{ doctor.get_full_name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_services' doctor.id %}">Services</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete Service</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Confirm Service Deletion</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> You are about to delete the following service from {{ doctor.get_full_name }}'s profile.
+                        This action cannot be undone.
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ object.service.name }}</h5>
+                            <p class="card-text mb-1"><strong>Category:</strong> {{ object.service.category.name }}</p>
+                            <p class="card-text mb-1"><strong>Price:</strong> {{ object.price_display }}</p>
+                            <p class="card-text mb-1"><strong>Duration:</strong> {{ object.duration_display }}</p>
+                            <p class="card-text">
+                                <strong>Status:</strong>
+                                {% if object.is_available %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Unavailable</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-danger">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Deleting this service will also remove all associated appointments and records.
+                        Patients who have booked this service will need to reschedule.
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

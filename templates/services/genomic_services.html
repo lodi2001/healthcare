@@ -1,0 +1,361 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Genomic Services - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Genomic Services</h2>
+        <p class="lead">Access genomic services for personalized medicine and patient care.</p>
+    </div>
+</div>
+
+<!-- Service Selection Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Select a Service</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Genomic Variants</h5>
+                                <p class="card-text">View patient's genomic variants and significance</p>
+                                <button class="btn btn-primary service-btn" data-service="genomic_variants">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Risk Alleles</h5>
+                                <p class="card-text">Check patient's risk alleles and disease associations</p>
+                                <button class="btn btn-primary service-btn" data-service="risk_alleles">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Drug-Gene Interactions</h5>
+                                <p class="card-text">Analyze drug-gene interactions for personalized medicine</p>
+                                <button class="btn btn-primary service-btn" data-service="drug_gene_interaction">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Dose Adjustment</h5>
+                                <p class="card-text">Calculate dose adjustments based on genomic profile</p>
+                                <button class="btn btn-primary service-btn" data-service="dose_adjustment">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Search Section -->
+<div class="row mb-4" id="patientSearchSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Patient Search</h4>
+            </div>
+            <div class="card-body">
+                <form id="patientSearchForm">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label for="patientId" class="form-label">National ID (IQAMA)</label>
+                                <input type="text" class="form-control" id="patientId" required>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label for="serviceType" class="form-label">Service Type</label>
+                                <input type="text" class="form-control" id="serviceType" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <div class="mb-3 w-100">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="row" id="resultsSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Results</h4>
+            </div>
+            <div class="card-body">
+                <!-- Genomic Variants Results -->
+                <div id="genomicVariantsResults" style="display: none;">
+                    <h5>Genomic Variants</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="variantsTable">
+                            <thead>
+                                <tr>
+                                    <th>Gene</th>
+                                    <th>Variant</th>
+                                    <th>Significance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Risk Alleles Results -->
+                <div id="riskAllelesResults" style="display: none;">
+                    <h5>Risk Alleles</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="riskAllelesTable">
+                            <thead>
+                                <tr>
+                                    <th>Condition</th>
+                                    <th>Gene</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Drug-Gene Interaction Results -->
+                <div id="drugGeneResults" style="display: none;">
+                    <h5>Drug-Gene Interactions</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="interactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Drug</th>
+                                    <th>Gene</th>
+                                    <th>Effect</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Dose Adjustment Results -->
+                <div id="doseAdjustmentResults" style="display: none;">
+                    <h5>Dose Adjustment</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="adjustmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Drug</th>
+                                    <th>Standard Dose</th>
+                                    <th>Adjusted Dose</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Service Selection
+    document.querySelectorAll('.service-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const serviceType = this.getAttribute('data-service');
+            document.getElementById('serviceType').value = serviceType;
+            document.getElementById('patientSearchSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            // Hide all result sections
+            document.getElementById('genomicVariantsResults').style.display = 'none';
+            document.getElementById('riskAllelesResults').style.display = 'none';
+            document.getElementById('drugGeneResults').style.display = 'none';
+            document.getElementById('doseAdjustmentResults').style.display = 'none';
+            
+            // Scroll to patient search section
+            document.getElementById('patientSearchSection').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+    
+    // Patient Search Form Submission
+    document.getElementById('patientSearchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const patientId = document.getElementById('patientId').value;
+        const serviceType = document.getElementById('serviceType').value;
+        
+        // In a real application, this would make an AJAX call to the server
+        // For now, we'll simulate the response with mock data
+        
+        document.getElementById('resultsSection').style.display = 'block';
+        
+        // Hide all result sections
+        document.getElementById('genomicVariantsResults').style.display = 'none';
+        document.getElementById('riskAllelesResults').style.display = 'none';
+        document.getElementById('drugGeneResults').style.display = 'none';
+        document.getElementById('doseAdjustmentResults').style.display = 'none';
+        
+        // Show the appropriate result section based on service type
+        if (serviceType === 'genomic_variants') {
+            document.getElementById('genomicVariantsResults').style.display = 'block';
+            displayGenomicVariants();
+        } else if (serviceType === 'risk_alleles') {
+            document.getElementById('riskAllelesResults').style.display = 'block';
+            displayRiskAlleles();
+        } else if (serviceType === 'drug_gene_interaction') {
+            document.getElementById('drugGeneResults').style.display = 'block';
+            displayDrugGeneInteractions();
+        } else if (serviceType === 'dose_adjustment') {
+            document.getElementById('doseAdjustmentResults').style.display = 'block';
+            displayDoseAdjustments();
+        }
+        
+        // Scroll to results section
+        document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    // Display Genomic Variants
+    function displayGenomicVariants() {
+        // Mock data for genomic variants
+        const variants = [
+            {'gene': 'BRCA1', 'variant': 'rs28897696', 'significance': 'Pathogenic'},
+            {'gene': 'MTHFR', 'variant': 'rs1801133', 'significance': 'Benign'},
+            {'gene': 'CYP2C19', 'variant': 'rs4244285', 'significance': 'Likely pathogenic'}
+        ];
+        
+        // Populate variants table
+        const variantsTableBody = document.querySelector('#variantsTable tbody');
+        variantsTableBody.innerHTML = '';
+        
+        variants.forEach(variant => {
+            const row = document.createElement('tr');
+            let significanceClass = '';
+            
+            if (variant.significance === 'Pathogenic' || variant.significance === 'Likely pathogenic') {
+                significanceClass = 'text-danger';
+            } else if (variant.significance === 'Benign' || variant.significance === 'Likely benign') {
+                significanceClass = 'text-success';
+            } else {
+                significanceClass = 'text-warning';
+            }
+            
+            row.innerHTML = `
+                <td>${variant.gene}</td>
+                <td>${variant.variant}</td>
+                <td class="${significanceClass}">${variant.significance}</td>
+            `;
+            variantsTableBody.appendChild(row);
+        });
+    }
+    
+    // Display Risk Alleles
+    function displayRiskAlleles() {
+        // Mock data for risk alleles
+        const riskAlleles = [
+            {'condition': 'Type 2 Diabetes', 'gene': 'TCF7L2', 'risk': 'Moderate'},
+            {'condition': 'Coronary Artery Disease', 'gene': 'CDKN2B-AS1', 'risk': 'Low'},
+            {'condition': 'Alzheimer\'s Disease', 'gene': 'APOE', 'risk': 'High'}
+        ];
+        
+        // Populate risk alleles table
+        const riskAllelesTableBody = document.querySelector('#riskAllelesTable tbody');
+        riskAllelesTableBody.innerHTML = '';
+        
+        riskAlleles.forEach(allele => {
+            const row = document.createElement('tr');
+            let riskClass = '';
+            
+            if (allele.risk === 'High') {
+                riskClass = 'text-danger';
+            } else if (allele.risk === 'Moderate') {
+                riskClass = 'text-warning';
+            } else {
+                riskClass = 'text-success';
+            }
+            
+            row.innerHTML = `
+                <td>${allele.condition}</td>
+                <td>${allele.gene}</td>
+                <td class="${riskClass}">${allele.risk}</td>
+            `;
+            riskAllelesTableBody.appendChild(row);
+        });
+    }
+    
+    // Display Drug-Gene Interactions
+    function displayDrugGeneInteractions() {
+        // Mock data for drug-gene interactions
+        const interactions = [
+            {'drug': 'Clopidogrel', 'gene': 'CYP2C19', 'effect': 'Reduced metabolism', 'recommendation': 'Consider alternative antiplatelet therapy'},
+            {'drug': 'Simvastatin', 'gene': 'SLCO1B1', 'effect': 'Increased risk of myopathy', 'recommendation': 'Lower dose or alternative statin'},
+            {'drug': 'Warfarin', 'gene': 'VKORC1', 'effect': 'Increased sensitivity', 'recommendation': 'Reduce initial dose'}
+        ];
+        
+        // Populate interactions table
+        const interactionsTableBody = document.querySelector('#interactionsTable tbody');
+        interactionsTableBody.innerHTML = '';
+        
+        interactions.forEach(interaction => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${interaction.drug}</td>
+                <td>${interaction.gene}</td>
+                <td>${interaction.effect}</td>
+                <td>${interaction.recommendation}</td>
+            `;
+            interactionsTableBody.appendChild(row);
+        });
+    }
+    
+    // Display Dose Adjustments
+    function displayDoseAdjustments() {
+        // Mock data for dose adjustments
+        const adjustments = [
+            {'drug': 'Warfarin', 'standard_dose': '5mg daily', 'adjusted_dose': '3mg daily', 'reason': 'VKORC1 variant'},
+            {'drug': 'Azathioprine', 'standard_dose': '2mg/kg daily', 'adjusted_dose': '1mg/kg daily', 'reason': 'TPMT variant'},
+            {'drug': 'Simvastatin', 'standard_dose': '40mg daily', 'adjusted_dose': '20mg daily', 'reason': 'SLCO1B1 variant'}
+        ];
+        
+        // Populate adjustments table
+        const adjustmentsTableBody = document.querySelector('#adjustmentsTable tbody');
+        adjustmentsTableBody.innerHTML = '';
+        
+        adjustments.forEach(adjustment => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${adjustment.drug}</td>
+                <td>${adjustment.standard_dose}</td>
+                <td>${adjustment.adjusted_dose}</td>
+                <td>${adjustment.reason}</td>
+            `;
+            adjustmentsTableBody.appendChild(row);
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Company Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Company Dashboard</h2>
+        <p class="lead">Welcome to your company dashboard, {{ user.company_name }}.</p>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Statistics</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ total_patients }}</h3>
+                                <p class="text-muted mb-0">Total Patients</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ clinical_trials }}</h3>
+                                <p class="text-muted mb-0">Clinical Trials</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ research_projects }}</h3>
+                                <p class="text-muted mb-0">Research Projects</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ data_access_requests }}</h3>
+                                <p class="text-muted mb-0">Data Access Requests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Services Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Quick Services</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Clinical Trial Management</h5>
+                                <p class="card-text">Manage and monitor clinical trials</p>
+                                <button id="clinicalTrialBtn" class="btn btn-primary">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Data Access Request</h5>
+                                <p class="card-text">Request access to anonymized patient data</p>
+                                <button id="dataAccessBtn" class="btn btn-primary">Request</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Genomic Analysis</h5>
+                                <p class="card-text">Analyze genomic data for research</p>
+                                <button id="genomicAnalysisBtn" class="btn btn-primary">Analyze</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Research Collaboration</h5>
+                                <p class="card-text">Find and connect with research partners</p>
+                                <button id="researchCollabBtn" class="btn btn-primary">Explore</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clinical Trials Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Clinical Trials</h4>
+                <button id="newTrialBtn" class="btn btn-primary">New Trial</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Trial ID</th>
+                                <th>Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Participants</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trial in clinical_trials_list %}
+                            <tr>
+                                <td>{{ trial.trial_id }}</td>
+                                <td>{{ trial.name }}</td>
+                                <td>{{ trial.start_date|date:"Y-m-d" }}</td>
+                                <td>{{ trial.end_date|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if trial.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% elif trial.status == 'completed' %}
+                                        <span class="badge bg-primary">Completed</span>
+                                    {% elif trial.status == 'recruiting' %}
+                                        <span class="badge bg-warning">Recruiting</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Planning</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ trial.participants }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">View Details</button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No clinical trials found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Access Requests Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Data Access Requests</h4>
+                <button id="newRequestBtn" class="btn btn-primary">New Request</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Data Type</th>
+                                <th>Purpose</th>
+                                <th>Submitted Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in data_access_requests_list %}
+                            <tr>
+                                <td>{{ request.request_id }}</td>
+                                <td>{{ request.data_type }}</td>
+                                <td>{{ request.purpose }}</td>
+                                <td>{{ request.submitted_date|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if request.status == 'approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif request.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif request.status == 'denied' %}
+                                        <span class="badge bg-danger">Denied</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">View Details</button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No data access requests found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Research Projects Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Research Projects</h4>
+                <button id="newProjectBtn" class="btn btn-primary">New Project</button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for project in research_projects_list %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="mb-0">{{ project.name }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>ID:</strong> {{ project.project_id }}</p>
+                                <p><strong>Lead:</strong> {{ project.lead_researcher }}</p>
+                                <p><strong>Status:</strong> 
+                                    {% if project.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% elif project.status == 'completed' %}
+                                        <span class="badge bg-primary">Completed</span>
+                                    {% elif project.status == 'planning' %}
+                                        <span class="badge bg-secondary">Planning</span>
+                                    {% endif %}
+                                </p>
+                                <p><strong>Start Date:</strong> {{ project.start_date|date:"Y-m-d" }}</p>
+                                <p><strong>Description:</strong> {{ project.description|truncatechars:100 }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary w-100">View Project</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <p class="text-center">No research projects found</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Clinical Trial Management Button
+    document.getElementById('clinicalTrialBtn').addEventListener('click', function() {
+        window.scrollTo({
+            top: document.querySelector('.card-header:contains("Clinical Trials")').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Data Access Request Button
+    document.getElementById('dataAccessBtn').addEventListener('click', function() {
+        document.getElementById('newRequestBtn').click();
+    });
+    
+    // Genomic Analysis Button
+    document.getElementById('genomicAnalysisBtn').addEventListener('click', function() {
+        alert('Genomic analysis functionality will be implemented with backend integration');
+    });
+    
+    // Research Collaboration Button
+    document.getElementById('researchCollabBtn').addEventListener('click', function() {
+        alert('Research collaboration functionality will be implemented with backend integration');
+    });
+    
+    // New Trial Button
+    document.getElementById('newTrialBtn').addEventListener('click', function() {
+        alert('New clinical trial functionality will be implemented with backend integration');
+    });
+    
+    // New Request Button
+    document.getElementById('newRequestBtn').addEventListener('click', function() {
+        alert('New data access request functionality will be implemented with backend integration');
+    });
+    
+    // New Project Button
+    document.getElementById('newProjectBtn').addEventListener('click', function() {
+        alert('New research project functionality will be implemented with backend integration');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Login - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid header-green py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Login</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Login to your account</h2>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> Your username and password didn't match. Please try again.
+                    </div>
+                    {% endif %}
+                    
+                    {% if next %}
+                        {% if user.is_authenticated %}
+                        <div class="alert alert-info">
+                            Your account doesn't have access to this page. To proceed,
+                            please login with an account that has access.
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            Please login to see this page.
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <h4 class="text-center mb-4">Account Login</h4>
+                    
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" name="username" id="id_username" class="form-control" required autofocus placeholder="Enter your username">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" name="password" id="id_password" class="form-control" required placeholder="Enter your password">
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="remember_me" id="id_remember_me" class="form-check-input">
+                            <label for="id_remember_me" class="form-check-label">Remember me</label>
+                        </div>
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-success">Login</button>
+                        </div>
+                        <div class="text-center">
+                            <a href="#" class="text-decoration-none">Forgot password?</a>
+                            <p class="mt-3 mb-0">Don't have an account? <a href="{% url 'user_type_selection' %}" class="text-decoration-none">Register here</a></p>
+                        </div>
+                        <input type="hidden" name="next" value="{{ next }}">
+                        <input type="hidden" name="user_type" value="{{ request.GET.user_type|default:'' }}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid bg-dark text-white py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- Overview Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Overview</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">About</a></li>
+                    <li><a href="#" class="text-white-50">Privacy and terms of use</a></li>
+                    <li><a href="#" class="text-white-50">News and events</a></li>
+                    <li><a href="#" class="text-white-50">Service level agreement</a></li>
+                </ul>
+            </div>
+            
+            <!-- Important Links Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Important links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">National service portal</a></li>
+                    <li><a href="#" class="text-white-50">Open government data</a></li>
+                    <li><a href="#" class="text-white-50">National strategy for data & Artificial intelligence</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact & Support Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Contact & support</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white-50">Customer hub</a></li>
+                    <li><a href="#" class="text-white-50">Contact us</a></li>
+                    <li><a href="#" class="text-white-50">Submit complaint</a></li>
+                    <li><a href="#" class="text-white-50">Report complaint</a></li>
+                </ul>
+            </div>
+            
+            <!-- Social Media Column -->
+            <div class="col-md-3 mb-4">
+                <h5>Social Media</h5>
+                <div class="d-flex">
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                </div>
+                
+                <h5 class="mt-4">Accessibility Tools</h5>
+                <div class="d-flex">
+                    <a href="#" class="text-white me-3"><i class="fas fa-volume-up"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fas fa-search-plus"></i></a>
+                    <a href="#" class="text-white"><i class="fas fa-adjust"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 pt-4 border-top border-secondary">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="small text-white-50">All Right Reserved For Digital Government Authority 2024</p>
+                    <p class="small text-white-50">Developed and Maintained by (insert the name of the entity)</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="{% static 'img/logo-white.png' %}" alt="Logo" height="50" class="me-3">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

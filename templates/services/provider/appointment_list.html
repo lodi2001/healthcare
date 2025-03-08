@@ -1,0 +1,240 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Appointments" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% trans "Appointments" %}</h1>
+        <a href="{% url 'provider_schedule_appointment' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-calendar-plus fa-sm text-white-50 mr-1"></i> {% trans "Schedule Appointment" %}
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-white">{% trans "Filter Appointments" %}</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="status">{% trans "Status" %}</label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="">{% trans "All" %}</option>
+                        {% for status_code, status_label in status_choices %}
+                            <option value="{{ status_code }}" {% if request.GET.status == status_code %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="date_from">{% trans "From Date" %}</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control" value="{{ request.GET.date_from }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="date_to">{% trans "To Date" %}</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control" value="{{ request.GET.date_to }}">
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
+                    <a href="{% url 'provider_appointments' %}" class="btn btn-secondary ml-2">{% trans "Reset" %}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Status Summary -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans "Pending" %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status_counts.pending|default:0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans "Confirmed" %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status_counts.confirmed|default:0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans "Completed" %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status_counts.completed|default:0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                {% trans "Cancelled" %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status_counts.cancelled|default:0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Show Card -->
+        <div class="col-xl-3 col-md-6 mb-4 mt-2">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                {% trans "NO SHOW" %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status_counts.no_show|default:0 }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointments Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-white">{% trans "Appointments" %}</h6>
+        </div>
+        <div class="card-body">
+            {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="appointmentsTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{% trans "ID" %}</th>
+                                <th>{% trans "Patient" %}</th>
+                                <th>{% trans "Service" %}</th>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Time" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.id }}</td>
+                                    <td>
+                                        <a href="{% url 'provider_patient_detail' appointment.patient.id %}">
+                                            {{ appointment.patient.get_full_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ appointment.provider_service.service.name }}</td>
+                                    <td>{{ appointment.appointment_date|date:"M d, Y" }}</td>
+                                    <td>{{ appointment.start_time|time:"H:i" }} - {{ appointment.end_time|time:"H:i" }}</td>
+                                    <td>
+                                        {% if appointment.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="badge bg-primary">{% trans "Confirmed" %}</span>
+                                        {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-success">{% trans "Completed" %}</span>
+                                        {% elif appointment.status == 'cancelled' %}
+                                            <span class="badge bg-danger">{% trans "Cancelled" %}</span>
+                                        {% elif appointment.status == 'no_show' %}
+                                            <span class="badge bg-secondary">{% trans "No Show" %}</span>
+                                        {% else %}
+                                            <span class="badge bg-info">{{ appointment.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'provider_appointment_detail' appointment.id %}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'provider_appointment_update' appointment.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {% if appointment.status == 'confirmed' %}
+                                            <a href="{% url 'medical_notes_update' appointment.id %}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-notes-medical"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    {% trans "No appointments found matching your criteria." %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#appointmentsTable').DataTable({
+            "order": [[3, "desc"], [4, "asc"]],
+            "language": {
+                "search": "{% trans 'Search' %}:",
+                "lengthMenu": "{% trans 'Show' %} _MENU_ {% trans 'entries' %}",
+                "info": "{% trans 'Showing' %} _START_ {% trans 'to' %} _END_ {% trans 'of' %} _TOTAL_ {% trans 'entries' %}",
+                "infoEmpty": "{% trans 'Showing 0 to 0 of 0 entries' %}",
+                "infoFiltered": "({% trans 'filtered from' %} _MAX_ {% trans 'total entries' %})",
+                "paginate": {
+                    "first": "{% trans 'First' %}",
+                    "last": "{% trans 'Last' %}",
+                    "next": "{% trans 'Next' %}",
+                    "previous": "{% trans 'Previous' %}"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

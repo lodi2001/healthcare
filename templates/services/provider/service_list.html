@@ -1,0 +1,176 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Manage Services - Healthcare App{% endblock %}
+
+{% block content %}
+<!-- Green Header Section -->
+<div class="container-fluid header-green py-4 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'provider_dashboard' %}" class="text-white">Provider Dashboard</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Manage Services</li>
+            </ol>
+        </nav>
+        <h2 class="mt-2">Manage Your Services</h2>
+        <p class="text-white-50">Add, update, or remove healthcare services you offer to patients</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3>Your Services</h3>
+                <a href="{% url 'provider_service_add' %}" class="btn btn-success-custom">
+                    <i class="fas fa-plus me-2"></i> Add New Service
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if provider_services %}
+        <div class="row">
+            {% for provider_service in provider_services %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">{{ provider_service.service.name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-1"><strong>Category:</strong> {{ provider_service.service.category.name }}</p>
+                            <p class="card-text mb-1"><strong>Price:</strong> {{ provider_service.price_display }}</p>
+                            <p class="card-text mb-1"><strong>Duration:</strong> {{ provider_service.duration_display }}</p>
+                            <p class="card-text mb-3">
+                                <strong>Status:</strong> 
+                                {% if provider_service.is_available %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Available</span>
+                                {% endif %}
+                            </p>
+                            <p class="card-text">{{ provider_service.service.description|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'provider_service_update' provider_service.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                                <a href="{% url 'provider_service_delete' provider_service.id %}" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash-alt me-1"></i> Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-stethoscope text-muted fa-4x mb-3"></i>
+                        <h4 class="mb-3">No Services Added Yet</h4>
+                        <p class="mb-4">You haven't added any healthcare services to your profile. Add services to let patients book appointments with you.</p>
+                        <a href="{% url 'provider_service_add' %}" class="btn btn-success-custom">
+                            <i class="fas fa-plus me-2"></i> Add Your First Service
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Available Service Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for category in categories %}
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    {% if category.icon %}
+                                        <i class="{{ category.icon }} fa-2x text-success me-3"></i>
+                                    {% else %}
+                                        <i class="fas fa-circle fa-2x text-success me-3"></i>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ category.name }}</h6>
+                                        <small class="text-muted">{{ category.services.count }} services</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12 text-center py-3">
+                                <p class="mb-0">No service categories available</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<div class="container-fluid footer-custom">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-3">Healthcare Portal</h5>
+                <p class="mb-3">Providing advanced healthcare solutions for providers and patients across Saudi Arabia.</p>
+                <div class="d-flex">
+                    <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h6 class="mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="mb-2"><a href="#">About Us</a></li>
+                    <li class="mb-2"><a href="#">Services</a></li>
+                    <li class="mb-2"><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h6 class="mb-3">Support</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#">Help Center</a></li>
+                    <li class="mb-2"><a href="#">FAQs</a></li>
+                    <li class="mb-2"><a href="#">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="mb-3">Contact Us</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Riyadh, Saudi Arabia</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> +966 11 123 4567</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@healthcare.sa</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid border-top border-secondary py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; 2025 Healthcare Portal. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>Developed by Healthcare IT Team</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

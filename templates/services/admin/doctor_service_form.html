@@ -1,0 +1,144 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - {{ doctor.get_full_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .required-field label:after {
+        content: " *";
+        color: red;
+    }
+    .form-section {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 15px;
+        margin-bottom: 25px;
+    }
+    .form-section h5 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_list' %}">Doctors</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_detail' doctor.id %}">{{ doctor.get_full_name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin_doctor_services' doctor.id %}">Services</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ title }} for {{ doctor.get_full_name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Service Information Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-stethoscope me-2"></i>Service Information</h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3 required-field">
+                                    {{ form.service.label_tag }}
+                                    {{ form.service }}
+                                    {% if form.service.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.service.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pricing and Duration Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i>Pricing and Duration</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 required-field">
+                                    <label for="{{ form.custom_price.id_for_label }}">Price (SAR)</label>
+                                    {{ form.custom_price }}
+                                    {% if form.custom_price.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.custom_price.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Custom price for this service (overrides default price)</small>
+                                </div>
+                                <div class="col-md-6 mb-3 required-field">
+                                    <label for="{{ form.custom_duration.id_for_label }}">Duration (minutes)</label>
+                                    {{ form.custom_duration }}
+                                    {% if form.custom_duration.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.custom_duration.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Custom duration for this service (overrides default duration)</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Availability Section -->
+                        <div class="form-section">
+                            <h5><i class="fas fa-check-circle me-2"></i>Availability</h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-check">
+                                        {{ form.is_available }}
+                                        <label class="form-check-label" for="{{ form.is_available.id_for_label }}">
+                                            Service is currently available
+                                        </label>
+                                    </div>
+                                    {% if form.is_available.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.is_available.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Uncheck this if the service is temporarily unavailable</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">{{ action }} Service</button>
+                            <a href="{% url 'admin_doctor_services' doctor.id %}" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Any additional JavaScript for the service form
+    });
+</script>
+{% endblock %}

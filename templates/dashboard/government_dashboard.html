@@ -1,0 +1,469 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Government Dashboard - Healthcare App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Government Dashboard</h2>
+        <p class="lead">Welcome to your government dashboard, {{ user.first_name }} {{ user.last_name }}.</p>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Health System Statistics</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ total_patients }}</h3>
+                                <p class="text-muted mb-0">Registered Patients</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ healthcare_providers }}</h3>
+                                <p class="text-muted mb-0">Healthcare Providers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ health_facilities }}</h3>
+                                <p class="text-muted mb-0">Health Facilities</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ data_access_requests }}</h3>
+                                <p class="text-muted mb-0">Data Access Requests</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Indicators Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Health Indicators</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <h5>Disease Prevalence</h5>
+                        <div class="chart-container" style="position: relative; height:250px;">
+                            <canvas id="diseaseChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h5>Vaccination Coverage</h5>
+                        <div class="chart-container" style="position: relative; height:250px;">
+                            <canvas id="vaccinationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <h5>Healthcare Access by Region</h5>
+                        <div class="chart-container" style="position: relative; height:250px;">
+                            <canvas id="accessChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h5>Health Expenditure</h5>
+                        <div class="chart-container" style="position: relative; height:250px;">
+                            <canvas id="expenditureChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Services Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Government Services</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Policy Analysis</h5>
+                                <p class="card-text">Analyze health policy impacts</p>
+                                <button id="policyAnalysisBtn" class="btn btn-primary">Access</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Population Health</h5>
+                                <p class="card-text">Monitor population health metrics</p>
+                                <button id="populationHealthBtn" class="btn btn-primary">Monitor</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Resource Allocation</h5>
+                                <p class="card-text">Optimize healthcare resource allocation</p>
+                                <button id="resourceAllocationBtn" class="btn btn-primary">Optimize</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Data Access Management</h5>
+                                <p class="card-text">Manage data access requests</p>
+                                <button id="dataAccessManagementBtn" class="btn btn-primary">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3 mb-3">
+                        <div class="card quick-service-card h-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Doctor Management</h5>
+                                <p class="card-text">Manage doctors, services and schedules</p>
+                                <a href="{% url 'admin_doctor_list' %}" class="btn btn-primary">Manage</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Access Requests Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Data Access Requests</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Requester</th>
+                                <th>Organization</th>
+                                <th>Data Type</th>
+                                <th>Purpose</th>
+                                <th>Submitted Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in data_access_requests_list %}
+                            <tr>
+                                <td>{{ request.request_id }}</td>
+                                <td>{{ request.requester_name }}</td>
+                                <td>{{ request.organization }}</td>
+                                <td>{{ request.data_type }}</td>
+                                <td>{{ request.purpose|truncatechars:30 }}</td>
+                                <td>{{ request.submitted_date|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if request.status == 'approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif request.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif request.status == 'denied' %}
+                                        <span class="badge bg-danger">Denied</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary">Review</button>
+                                        <button class="btn btn-sm btn-success">Approve</button>
+                                        <button class="btn btn-sm btn-danger">Deny</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No data access requests found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Health Facilities Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Health Facilities</h4>
+                <button id="addFacilityBtn" class="btn btn-primary">Add Facility</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Facility ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Region</th>
+                                <th>City</th>
+                                <th>Capacity</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for facility in health_facilities_list %}
+                            <tr>
+                                <td>{{ facility.facility_id }}</td>
+                                <td>{{ facility.name }}</td>
+                                <td>{{ facility.type }}</td>
+                                <td>{{ facility.region }}</td>
+                                <td>{{ facility.city }}</td>
+                                <td>{{ facility.capacity }}</td>
+                                <td>
+                                    {% if facility.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% elif facility.status == 'under_maintenance' %}
+                                        <span class="badge bg-warning">Under Maintenance</span>
+                                    {% elif facility.status == 'inactive' %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">View Details</button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No health facilities found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Disease Prevalence Chart
+        const diseaseCtx = document.getElementById('diseaseChart').getContext('2d');
+        const diseaseChart = new Chart(diseaseCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Diabetes', 'Hypertension', 'Heart Disease', 'Cancer', 'Respiratory Disease'],
+                datasets: [{
+                    label: 'Prevalence (%)',
+                    data: [12, 25, 8, 5, 10],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 30
+                    }
+                }
+            }
+        });
+        
+        // Vaccination Coverage Chart
+        const vaccinationCtx = document.getElementById('vaccinationChart').getContext('2d');
+        const vaccinationChart = new Chart(vaccinationCtx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: 'Influenza',
+                    data: [65, 70, 75, 80, 85],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.1
+                }, {
+                    label: 'COVID-19',
+                    data: [0, 50, 70, 75, 80],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    tension: 0.1
+                }, {
+                    label: 'Childhood Vaccines',
+                    data: [90, 91, 92, 93, 94],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+        
+        // Healthcare Access Chart
+        const accessCtx = document.getElementById('accessChart').getContext('2d');
+        const accessChart = new Chart(accessCtx, {
+            type: 'radar',
+            data: {
+                labels: ['North', 'East', 'South', 'West', 'Central'],
+                datasets: [{
+                    label: 'Primary Care Access',
+                    data: [85, 70, 60, 75, 90],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+                }, {
+                    label: 'Specialist Care Access',
+                    data: [70, 55, 45, 60, 80],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+        
+        // Health Expenditure Chart
+        const expenditureCtx = document.getElementById('expenditureChart').getContext('2d');
+        const expenditureChart = new Chart(expenditureCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hospitals', 'Primary Care', 'Pharmaceuticals', 'Research', 'Administration'],
+                datasets: [{
+                    label: 'Budget Allocation',
+                    data: [40, 25, 15, 10, 10],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+    
+    // Policy Analysis Button
+    document.getElementById('policyAnalysisBtn').addEventListener('click', function() {
+        alert('Policy analysis functionality will be implemented with backend integration');
+    });
+    
+    // Population Health Button
+    document.getElementById('populationHealthBtn').addEventListener('click', function() {
+        window.scrollTo({
+            top: document.querySelector('.card-header:contains("Health Indicators")').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Resource Allocation Button
+    document.getElementById('resourceAllocationBtn').addEventListener('click', function() {
+        alert('Resource allocation functionality will be implemented with backend integration');
+    });
+    
+    // Data Access Management Button
+    document.getElementById('dataAccessManagementBtn').addEventListener('click', function() {
+        window.scrollTo({
+            top: document.querySelector('.card-header:contains("Data Access Requests")').offsetTop - 100,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Add Facility Button
+    document.getElementById('addFacilityBtn').addEventListener('click', function() {
+        alert('Add facility functionality will be implemented with backend integration');
+    });
+</script>
+{% endblock %}
