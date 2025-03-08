@@ -254,6 +254,53 @@ docker-compose down
 docker-compose up -d
 ```
 
+### Fixture Files Not Found
+
+If you encounter an error like:
+```
+CommandError: No fixture named 'service_categories' found.
+```
+
+This means the fixture files are not in the expected location. Try these solutions:
+
+1. **Check if the fixtures directory exists**:
+   ```bash
+   ls -la fixtures/
+   ```
+
+2. **Create the fixtures directory if it doesn't exist**:
+   ```bash
+   mkdir -p fixtures
+   ```
+
+3. **Manually copy the fixture content**:
+   You can create the fixture files manually by copying the content from your local environment.
+
+4. **Use the direct script approach instead (recommended)**:
+   ```bash
+   # This is the most reliable method
+   docker-compose exec web python create_services_script.py
+   ```
+
+### Services Not Showing Up After Import
+
+If services are still not showing up in your application after importing:
+
+1. **Check if the services were created in the database**:
+   ```bash
+   docker-compose exec web python manage.py shell -c "from apps.services.models import Service, ServiceCategory; print(f'Categories: {ServiceCategory.objects.count()}, Services: {Service.objects.count()}')"
+   ```
+
+2. **Clear cache if applicable**:
+   ```bash
+   docker-compose exec web python manage.py clearcache
+   ```
+
+3. **Restart the web server**:
+   ```bash
+   docker-compose restart web
+   ```
+
 ## Backup and Restore
 
 ### Backup Database
