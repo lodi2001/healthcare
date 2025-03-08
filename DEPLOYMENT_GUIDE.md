@@ -139,6 +139,40 @@ You can access your application in two ways:
 1. **Direct Django access**: `http://68.183.142.4:8000`
 2. **Through Nginx**: `http://68.183.142.4`
 
+## Environment-Specific Settings
+
+The application now uses environment-specific settings to handle both local development and production environments:
+
+### Local Development
+
+For local development, copy the `.env.local` file to `.env`:
+
+```bash
+cp .env.local .env
+```
+
+This sets `PRODUCTION=False` and configures the application to:
+- Use SQLite as the database
+- Enable DEBUG mode
+- Allow connections only from localhost
+- Disable production security settings
+
+### Production Deployment
+
+For production deployment on Digital Ocean, use the `.env.example` as a template:
+
+```bash
+cp .env.example .env
+```
+
+Then edit the `.env` file to set your production values:
+- Set `PRODUCTION=True`
+- Set a secure `SECRET_KEY`
+- Configure PostgreSQL database credentials
+- Set `DEBUG=False`
+
+The application will automatically use the appropriate settings based on the `PRODUCTION` flag.
+
 ## Troubleshooting
 
 ### View Logs
